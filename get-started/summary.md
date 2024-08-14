@@ -29,6 +29,6 @@ hitchhikersGuide[Symbol("meaning of life")];
 // 42
 ```
 
-    - arrays are a special type of object that’s comprised of an ordered and numerically indexed list of data.
+- arrays are a special type of object that’s comprised of an ordered and numerically indexed list of data.
 
-    - Objects are more general: an unordered, keyed collection of any various values. In other words, you access the element by a string location name (aka “key” or “property”) rather than by its numeric position (as with arrays).
+- Objects are more general: an unordered, keyed collection of any various values. In other words, you access the element by a string location name (aka “key” or “property”) rather than by its numeric position (as with arrays).
