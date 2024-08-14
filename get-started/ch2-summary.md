@@ -2,11 +2,6 @@
 
 <br>
 
-# Chapter 1: What _Is_ JavaScript?
-
-<br>
-<br>
-
 # Chapter 2: Surveying JS
 
 ## What is interpolation?
@@ -32,3 +27,21 @@ hitchhikersGuide[Symbol("meaning of life")];
 - arrays are a special type of object that’s comprised of an ordered and numerically indexed list of data.
 
 - Objects are more general: an unordered, keyed collection of any various values. In other words, you access the element by a string location name (aka “key” or “property”) rather than by its numeric position (as with arrays).
+
+<br>
+
+## What is coercion?
+
+Converting from one value type to another, such as from string to number, is referred to in JS as “**coercion**.”
+
+- In JS, all object values are held by reference
+
+<br>
+
+## ES Modules
+
+ES modules (ESM), introduced to the JS language in ES6:
+
+- There’s no wrapping function to define a module. The wrapping context is a file. ESMs are always file-based; one file, one module.
+- You don’t interact with a module’s “API” explicitly, but rather use the export keyword to add a variable or method to its public API definition.
+- You don’t “instantiate” an ES module, you just import it to use its single instance.
