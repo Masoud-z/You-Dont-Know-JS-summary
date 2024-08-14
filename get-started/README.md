@@ -1,4 +1,4 @@
-# You Don't Know JS Yet: Get Started **_Summary_** - 2nd Edition
+# You Don't Know JS Yet: Get Started ***Summary*** - 2nd Edition
 
 <img src="images/cover.png" width="300">
 
@@ -8,4 +8,4 @@
 
 ---
 
-<a href="https://github.com/getify/You-Dont-Know-JS/tree/2nd-ed/get-started">Book repo</a>
+## <a href="https://github.com/getify/You-Dont-Know-JS/tree/2nd-ed/get-started">Book repo</a>
