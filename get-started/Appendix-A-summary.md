@@ -4,6 +4,8 @@
 
 # Appendix A: Exploring Further
 
+<br>
+
 - primitive values are always assigned/passed as value copies
 
 - In JS, only object values (arrays, objects, functions, etc.) are treated as references.

@@ -4,6 +4,8 @@
 
 # Chapter 1: What's the Scope
 
+<br>
+
 - JS is in fact parsed/compiled in a separate phase before execution begins.
 
 - The code author’s decisions on where to place variables, functions, and blocks with respect to each other are analyzed according to the rules of scope, during the initial parsing/compilation phase.

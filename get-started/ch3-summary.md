@@ -4,6 +4,8 @@
 
 # Chapter 3: Digging to the Roots of JS
 
+<br>
+
 ## What is spread ?
 
 To spread an iterator, you have to have something to spread it into. There are two possibilities in JS: an **array** or **an argument list for a function call**.

@@ -4,6 +4,8 @@
 
 # Chapter 2: Surveying JS
 
+<br>
+
 ## What is interpolation?
 
 ```js
