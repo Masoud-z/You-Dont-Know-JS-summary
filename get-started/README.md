@@ -1,4 +1,4 @@
-# You Don't Know JS Yet: Get Started ***Summary*** - 2nd Edition
+# You Don't Know JS Yet: Get Started <ins>**_Summary_**</ins> - 2nd Edition
 
 <img src="images/cover.png" width="300">
 
