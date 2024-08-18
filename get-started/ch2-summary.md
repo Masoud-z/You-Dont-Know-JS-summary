@@ -38,6 +38,10 @@ Converting from one value type to another, such as from string to number, is ref
 
 - In JS, all object values are held by reference
 
+- If the value types being compared are different, the `==` differs from `===` in that it allows coercion before the comparison.
+
+- Instead of “loose equality,” the `==` operator should be described as “**coercive equality**”.
+
 <br>
 
 ## ES Modules

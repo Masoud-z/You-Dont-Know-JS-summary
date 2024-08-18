@@ -73,3 +73,7 @@ askQuestion();
 Because we used `strict-mode`, the assignment failure is reported as a `TypeError`; in non-strict-mode, such an assignment fails silently with no exception.
 
 A function expression with a name identifier is referred to as a “**named function expression**”, but one without a name identifier is referred to as an “**anonymous function expression**”. Anonymous function expressions clearly have no name identifier that affects either scope.
+
+<br>
+
+## Arrow Functions
