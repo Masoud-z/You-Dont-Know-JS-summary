@@ -77,3 +77,21 @@ A function expression with a name identifier is referred to as a “**named func
 <br>
 
 ## Arrow Functions
+
+- Arrow functions are **lexically anonymous**, meaning they have no directly related identifier that references the function.
+
+- Other than being anonymous (and having no declarative form), `=>` arrow functions have the same lexical scope rules as function functions do.
+
+- An arrow function, with or without `{ .. }` around its body, still creates a separate, inner nested bucket of scope. Variable declarations inside this nested scope bucket behave the same as in a function scope.
+
+<br>
+
+## Backing Out
+
+- When a function (declaration or expression) is defined, a new scope is created.
+
+- The positioning of scopes nested inside one another creates a natural scope hierarchy throughout the program, called the scope chain.
+
+- The scope chain controls variable access, directionally oriented upward and outward.
+
+- When a variable name is repeated at different levels of the scope chain, shadowing occurs, which prevents access to the outer variable from that point inward.

@@ -95,7 +95,9 @@ If the tokenizer were to invoke stateful parsing rules to figure out whether `a`
 
 - If you place a variable declaration inside a function, the compiler handles this declaration as it’s parsing the function, and associates that declaration with the function’s scope.
 
-- If a variable is block-scope declared (let / const), then it’s associated with the nearest enclosing { .. } block, rather than its enclosing function (as with var).
+- If a variable is block-scope declared (`let` / `const`), then it’s associated with the nearest enclosing `{ .. }` block, rather than its enclosing function (as with `var`).
+
+Furthermore, a reference (target or source role) for a variable must be resolved as coming from one of the scopes that are lexically available to it;
 
 <br>
 
