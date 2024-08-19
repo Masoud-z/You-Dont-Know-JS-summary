@@ -67,3 +67,35 @@ Hoisting should be used to refer to the **compile time operation** of **generati
 > [!WARNING]
 > .**Syntax errors** represent faults in the program that **stop it from even starting execution**.
 > **Type errors** represent faults that arise **during program execution**.
+
+<br>
+
+### Loops
+
+All the rules of scope (including “re-declaration” of `let` created variables) are applied per scope instance. In other words, each time a scope is entered during execution, everything resets.
+
+- `const` can’t be used with the classic `for`-loop form because of the required re-assignment.
+
+<br>
+
+## Uninitialized Variables (aka, TDZ)
+
+With `var` declarations, the variable is “hoisted” to the top of its scope. But it’s also automatically initialized to the `undefined` value, so that the variable can be used throughout the entire scope.
+
+- `var` variable automatically initializes at the top of the scope, where `let` variable does not.
+
+### What is Temporal Dead Zone (TDZ)?
+
+period of time from the entering of a scope to where the auto-initialization of the variable occurs is: **Temporal Dead Zone (TDZ)**. The TDZ is the time window where a variable exists but is still uninitialized, and therefore cannot be accessed in any way.
+
+- A `var` also has technically has a TDZ, but it’s zero in length and thus unobservable to our programs! Only `let` and `const` have an observable TDZ.
+
+`let`/`const` declarations do not automatically initialize at the beginning of the scope, the way `var` does.
+
+- **auto-registration** of a variable at the top of the scope (i.e., what I call **“hoisting”**) and **auto-initialization** at the top of the scope (to `undefined`) are distinct operations.
+
+<br>
+
+**TDZ** errors occur because `let`/`const` declarations **do hoist** their <ins>declarations</ins> to the top of their scopes, but unlike `var`, they defer the **auto-initialization** of their variables until the moment in the code’s sequencing where the original declaration appeared. **This window of time (hint: temporal), whatever its length, is the TDZ**.
+
+- Always put your `let` and `const` declarations at the top of any scope. Shrink the TDZ window to zero (or near zero) length.
