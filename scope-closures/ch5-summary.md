@@ -64,6 +64,6 @@ Hoisting should be used to refer to the **compile time operation** of **generati
 
 ### Constants
 
-> ["!WARNING"]
-> **Syntax** errors represent faults in the program that **stop it from even starting execution**.
+> [!WARNING]
+> .**Syntax errors** represent faults in the program that **stop it from even starting execution**.
 > **Type errors** represent faults that arise **during program execution**.
