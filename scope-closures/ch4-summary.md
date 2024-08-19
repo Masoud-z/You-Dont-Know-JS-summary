@@ -66,3 +66,45 @@ window["my-todo-list"];
 <br>
 
 ## ES Modules (ESM)
+
+- **Global variables** <ins>**don’t**</ins> get created by declaring variables in the top-level scope of a module.
+
+- The module’s top-level scope is descended from the global scope, almost as if the entire contents of the module were wrapped in a function. Thus, all variables that exist in the global scope (whether they’re on the global object or not!) are available as lexical identifiers from inside the module’s scope.
+
+- ESM encourages a minimization of reliance on the global scope, where you import whatever modules you may need for the current module to operate. As such, you less often see usage of the global scope or its global object
+
+<br>
+
+## Node
+
+**how do you define actual global variables in Node?**
+The only way to do so is to add properties to another of Node’s automatically provided “globals,” which is ironically called global. global is a reference to the real global scope object, somewhat like using window in a browser JS environment.
+
+- Remember, the identifier `global` is not defined by JS; it’s specifically defined by Node.
+
+<br>
+
+## Global This
+
+```js
+const theGlobalScopeObject = new Function("return this")();
+```
+
+A function can be dynamically constructed from code stored in a string value with the `Function()` constructor, similar to `eval(..)`. Such a function will automatically be run in non-strict-mode (for legacy reasons) when invoked with the normal () function invocation as shown; its this will point at the global object.
+
+- As of ES2020, JS has finally defined a standardized reference to the global scope object, called `globalThis`.
+
+We could even attempt to define a cross-environment polyfill that’s safer across pre-globalThis JS environments, such as:
+
+```js
+const theGlobalScopeObject =
+  typeof globalThis != "undefined"
+    ? globalThis
+    : typeof global != "undefined"
+    ? global
+    : typeof window != "undefined"
+    ? window
+    : typeof self != "undefined"
+    ? self
+    : new Function("return this")();
+```
