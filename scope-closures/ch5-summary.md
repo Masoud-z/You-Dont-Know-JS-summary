@@ -49,3 +49,21 @@ The “rule” of the hoisting metaphor is that function declarations are hoiste
 
 **What is hoisting**: <br>
 Hoisting should be used to refer to the **compile time operation** of **generating runtime instructions** for the **automatic registration of a variable at the beginning of its scope**, <ins>**each time that scope is entered**</ins>.
+
+<br>
+
+### Re-declaration
+
+- A repeated `var` declaration of the same identifier name in a scope is effectively a do-nothing operation.
+
+- Two same declarations involving `let` will throw **SyntaxError** error. If either declaration uses `let`, the other can be either `let` or `var` or `function`, and **the error will still occur**.
+
+- the only way to “re-declare” a variable is to use `var` for all (two or more) of its declarations.
+
+<br>
+
+### Constants
+
+> ["!WARNING"]
+> **Syntax** errors represent faults in the program that **stop it from even starting execution**.
+> **Type errors** represent faults that arise **during program execution**.
