@@ -110,3 +110,9 @@ Student.getName(73); // Suzy
 ```
 
 As is likely obvious, the \* imports everything exported to the API, default and named, and stores it all under the single namespace identifier as specified.
+
+<br>
+
+### Exit Scope
+
+- And underneath modules, the magic of how all our module state is maintained is closures leveraging the lexical scope system.
