@@ -24,6 +24,10 @@ Each scope automatically has all its identifiers registered at the start of the 
 
 - At the beginning of a scope, if any identifier came from a function declaration, that variable is automatically initialized to its associated function reference. And if any identifier came from a var declaration (as opposed to let/const), that variable is automatically initialized to undefined so that it can be used; otherwise, the variable remains uninitialized and cannot be used until its full declaration-and-initialization are executed.
 
+> Function declaration: `function doStuff() {};`
+
+> Function expression: `const doStuff = function() {}`
+
 - One of the key aspects of lexical scope is that any time an identifier reference cannot be found in the current scope, the next outer scope in the nesting is consulted; that process is repeated until an answer is found or there are no more scopes to consult.
 
 - “`Not defined`” really means “**not declared**”—or, rather, “**undeclared**”, <ins>as in a variable that has no matching formal declaration in any lexically available scope</ins>. By contrast, “`undefined`” really means a variable was found (**declared**), but the variable otherwise has no other value in it at the moment, so it defaults to the `undefined` value

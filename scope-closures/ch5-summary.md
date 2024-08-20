@@ -28,6 +28,10 @@ When a `function` declaration’s name identifier is registered at the top of it
 
 - Function hoisting only applies to formal function declarations (specifically those which appear outside of blocks), not to `function` expression assignments.
 
+> Function declaration: `function doStuff() {};`
+
+> Function expression: `const doStuff = function() {}`
+
 - In addition to being hoisted, variables declared with `var` are also automatically initialized to `undefined` at the beginning of their scope.
 
 - A `function` declaration is hoisted and initialized to its function value (again, called **function hoisting**). A `var` variable is also hoisted, and then auto-initialized to `undefined`. Any subsequent function expression assignments to that variable don’t happen until that assignment is processed during runtime execution.
@@ -44,6 +48,10 @@ When a `function` declaration’s name identifier is registered at the top of it
 ### Hoisting: Yet Another Metaphor
 
 The “rule” of the hoisting metaphor is that function declarations are hoisted first, then variables are hoisted immediately after all the functions.
+
+> Function declaration: `function doStuff() {};`
+
+> Function expression: `const doStuff = function() {}`
 
 <br>
 

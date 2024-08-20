@@ -37,6 +37,10 @@ The connections between scopes that are nested within other scopes is called the
 
 - One major difference between function declarations and function expressions is what happens to the name identifier of the function.
 
+> Function declaration: `function doStuff() {};`
+
+> Function expression: `const doStuff = function() {}`
+
 Consider a named function expression:
 
 ```js
