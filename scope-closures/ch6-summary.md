@@ -62,3 +62,28 @@ Not all `{ .. }` curly-brace pairs create blocks (and thus are eligible to becom
 <br>
 
 ## var and let
+
+- `var` attaches to the nearest enclosing function scope, no matter where it appears.
+- `var` should be reserved for use in the top-level scope of a function.
+- If a declaration belongs in a block scope, use `let`. If it belongs in the function scope, use `var` (again, just my opinion).
+
+<br>
+
+## What’s the Catch?
+
+In `try..catch` clause, the `catch` clause has used an additional (little-known) block scoping declaration capability ( in "`catch(err){…}`" clause the "err" variable declared by the `catch` clause is block-scoped to that block.)
+
+- ES2019 changed catch clauses so their declaration is optional; if the declaration is omitted, the `catch` block is no longer (by default) a scope; it’s still a block, though!
+
+<br>
+
+## Function Declarations in Blocks (FiB)
+
+The JS specification says that function declarations inside of blocks are block-scoped.
+
+- Most browser-based JS engines (including v8, which comes from Chrome but is also used in Node) will behave as the identifier is scoped outside the block but the function value is not automatically initialized, so it remains `undefined`.
+
+Never place a function declaration directly inside any block. Always place **function declarations** anywhere in the top-level scope of a function (or in the global scope).
+
+> Function declaration: `function doStuff() {};`
+> Function expression: `const doStuff = function() {}`
