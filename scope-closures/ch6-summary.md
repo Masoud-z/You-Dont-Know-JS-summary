@@ -86,4 +86,5 @@ The JS specification says that function declarations inside of blocks are block-
 Never place a function declaration directly inside any block. Always place **function declarations** anywhere in the top-level scope of a function (or in the global scope).
 
 > Function declaration: `function doStuff() {};`
+
 > Function expression: `const doStuff = function() {}`
