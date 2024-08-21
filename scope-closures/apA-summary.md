@@ -34,6 +34,8 @@ function getStudentName(maxID, studentID = maxID) {
 }
 ```
 
+<br><br><br>
+
 ```js
 function whatsTheDealHere(id, defaultID = () => id) {
   var id = 5;
