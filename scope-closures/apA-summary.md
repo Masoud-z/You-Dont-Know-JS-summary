@@ -148,3 +148,68 @@ Briefly: **arrow functions don’t define a `this` identifier keyword at all**. 
 <br>
 
 ## The Case for var
+
+<br>
+
+### The Case for var
+
+`var` has a few other characteristics that, in certain limited circumstances, make it more powerful.
+One example is when a loop is exclusively using a variable, but its conditional clause cannot see block-scoped declarations inside the iteration:
+
+```js
+function commitAction() {
+  do {
+    let result = commit();
+    var done = result && result.code == 1;
+  } while (!done);
+}
+```
+
+Here, result is clearly only used inside the block, so we use let. But done is a bit different. It’s only useful for the loop, but the while clause cannot see let declarations that appear inside the loop. So we compromise and use var, so that done is hoisted to the outer scope where it can be seen.
+
+<br>
+
+Another helpful characteristic of var is seen with declarations inside unintended blocks.
+
+```js
+function getStudents() {
+  try {
+    // not really a block scope
+    var records = fromCache("students");
+  } catch (err) {
+    // oops, fall back to a default
+    var records = [];
+  }
+  // ..
+}
+```
+
+<br>
+
+## Are Synchronous Callbacks Still Closures?
+
+- Closure is a function instance remembering its outer variables even as that function is passed around and invoked in other scopes.
+- Closure is a function instance and its scope environment being preserved in-place while any references to it are passed around and invoked from other scopes.
+
+<br>
+
+### Synchronous Callback?
+
+**Dependency Injection (DI)** can be summarized as passing in necessary part(s) of functionality to another part of the program so that it can invoke them to complete its work.
+_Inversion of Control (IoC )_ means that instead of the current area of your program controlling what’s happening, you hand control off to another part of the program.
+
+In the context of our discussion, either DI or IoC could work as an alternative label for a synchronous callback.
+
+<br>
+
+Let’s refer to (the functions formerly known as) synchronous callbacks, **as inter-invoked functions (IIFs).**
+
+Yes, exactly, I’m playing off IIFEs.
+
+#### Inter-invoked functions (IIFs) :
+
+These kinds of functions are inter-invoked, meaning: another entity invokes them, as opposed to IIFEs, which invoke themselves immediately.
+
+vet’s refer to (the functions formerly known as) synchronous callbacks, as inter-invoked functions (IIFs)
+
+An asynchronous callback is an IIF that’s invoked asynchronously instead of synchronously.
