@@ -18,6 +18,6 @@
 
 <br>
 
-- [Chapter 2: Surveying JS](ch2-summary.md)
-- [Chapter 3: Digging to the Roots of JS](ch3-summary.md)
-- [Appendix A: Exploring Further](apA-summary.md)
+- [Chapter 2: Surveying JS - Summary](ch2-summary.md)
+- [Chapter 3: Digging to the Roots of JS - Summary](ch3-summary.md)
+- [Appendix A: Exploring Further - Summary](apA-summary.md)
