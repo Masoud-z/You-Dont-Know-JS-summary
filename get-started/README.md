@@ -13,3 +13,11 @@
 > [!CAUTION]
 > This **may be useful** <ins>if you first read the <a href="https://github.com/getify/You-Dont-Know-JS">original books!</a></ins>.
 > If you haven't read the books don't waste your time here, it will definitely be useless.
+
+---
+
+<br>
+
+- [Chapter 2: Surveying JS](ch2-summary.md)
+- [Chapter 3: Digging to the Roots of JS](ch3-summary.md)
+- [Appendix A: Exploring Further](apA-summary.md)
