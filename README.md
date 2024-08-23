@@ -8,5 +8,5 @@ This is the summary of famous book series <a href="https://github.com/getify/You
 
 <br>
 
-- [Get Started **_Summary_** - 2nd Edition ](get-started/README.md) | [ Get Started - 2nd Edition ](https://github.com/getify/You-Dont-Know-JS/blob/2nd-ed/get-started/README.md) | [Buy on Leanpub](https://leanpub.com/ydkjsy-get-started) | [Buy on Amazon](https://www.amazon.com/dp/B084BNMN7T)
-- [Scope & Closures **_Summary_** - 2nd Edition ](scope-closures/README.md) | [ Scope & Closures - 2nd Edition ](https://github.com/getify/You-Dont-Know-JS/blob/2nd-ed/scope-closures/README.md) | [Buy on Leanpub](https://leanpub.com/ydkjsy-scope-closures) | [Buy on Amazon](https://www.amazon.com/dp/B08634PZ3N)
+- [Get Started **_Summary_** - 2nd Edition](get-started/README.md) | [Get Started - 2nd Edition](https://github.com/getify/You-Dont-Know-JS/blob/2nd-ed/get-started/README.md) | [Buy on Leanpub](https://leanpub.com/ydkjsy-get-started) | [Buy on Amazon](https://www.amazon.com/dp/B084BNMN7T)
+- [Scope & Closures **_Summary_** - 2nd Edition](scope-closures/README.md) | [Scope & Closures - 2nd Edition](https://github.com/getify/You-Dont-Know-JS/blob/2nd-ed/scope-closures/README.md) | [Buy on Leanpub](https://leanpub.com/ydkjsy-scope-closures) | [Buy on Amazon](https://www.amazon.com/dp/B08634PZ3N)
