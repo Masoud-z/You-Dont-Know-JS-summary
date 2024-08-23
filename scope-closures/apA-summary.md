@@ -213,3 +213,11 @@ These kinds of functions are inter-invoked, meaning: another entity invokes them
 vet’s refer to (the functions formerly known as) synchronous callbacks, as inter-invoked functions (IIFs)
 
 An asynchronous callback is an IIF that’s invoked asynchronously instead of synchronously.
+
+<br>
+
+### Defer to Closure
+
+#### Currying:
+
+**Currying** is the technique of translating a function that takes multiple arguments into a sequence of families of functions, each taking a single argument.
