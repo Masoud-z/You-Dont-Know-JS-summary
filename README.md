@@ -2,8 +2,10 @@
 
 This is the summary of famous book series <a href="https://github.com/getify/You-Dont-Know-JS">**_You Don't Know JS Yet_**</a> by <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Kyle Simpson</a>.
 
+2nd Edition:
+
 <a href="https://leanpub.com/ydkjsy-get-started"><img src="get-started/images/cover.png" width="75"></a>&nbsp;&nbsp;
-<a href="https://leanpub.com/ydkjsy-scope-closures"><img src="scope-closures/images/cover.png" width="75"></a>&nbsp;&nbsp;...
+<a href="https://leanpub.com/ydkjsy-scope-closures"><img src="scope-closures/images/cover.png" width="75"></a>&nbsp;&nbsp;
 
 > [!CAUTION]
 > This **may be useful** <ins>if you first read the <a href="https://github.com/getify/You-Dont-Know-JS">original books!</a></ins>.
