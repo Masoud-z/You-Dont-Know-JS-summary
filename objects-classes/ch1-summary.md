@@ -363,3 +363,51 @@ If we wanted to get all the keys in an object (enumerable or not)? `Object.getOw
 - Recall that the `in` operator will potentially traverse the entire chain looking for the existence of a property. Similarly, a `for..in` loop will traverse the chain and list any enumerable (owned or inherited) properties.
 
 - there's no built-in API that will traverse the whole chain and return a list of the combined set of both owned and inherited contents.
+
+<br>
+
+## Temporary Containers
+
+Using a container to hold multiple values is sometimes just a temporary transport mechanism, such as when you want to pass multiple values to a function via a single argument, or when you want a function to return multiple values.
+
+```js
+function formatValues({ one, two, three }) {
+  // the actual object passed in as an
+  // argument is not accessible, since
+  // we destructured it into three
+  // separate variables
+
+  one = one.toUpperCase();
+  two = `--${two}--`;
+  three = three.substring(0, 5);
+
+  // this object is only to transport
+  // all three values in a single
+  // return statement
+  return { one, two, three };
+}
+
+// destructuring the return value from
+// the function, because that returned
+// object is just a temporary container
+// to transport us multiple values
+
+const { one, two, three } =
+  // this object argument is a temporary
+  // transport for multiple input values
+  formatValues({
+    one: "Kyle",
+    two: "Simpson",
+    three: "getify",
+  });
+
+one; // "KYLE"
+two; // "--Simpson--"
+three; // "getif"
+```
+
+<br>
+
+## Containers Are Collections Of Properties
+
+The most common usage of objects is as containers for multiple values.
