@@ -13,3 +13,5 @@
 ---
 
 <br>
+
+- [Chapter 1: Object Foundations - Summary](ch1-summary.md)
