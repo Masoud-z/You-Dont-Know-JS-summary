@@ -149,3 +149,81 @@ Recently, though, a third option has landed. This is not a JS feature, but rathe
 <br>
 
 ## Accessing Properties
+
+### Object Entries
+
+You can get a listing of the properties in an object, as an array of tuples (two-element subarrays) holding the property name and value:
+
+```js
+myObj = {
+  favoriteNumber: 42,
+  isDeveloper: true,
+  firstName: "Kyle",
+};
+Object.entries(myObj);
+// [ ["favoriteNumber",42], ["isDeveloper",true], ["firstName","Kyle"] ]
+```
+
+It's also possible to create a new object from a list of entries, using `Object.fromEntries(..)`
+
+```js
+myObjShallowCopy = Object.fromEntries(Object.entries(myObj));
+```
+
+<br>
+
+### Destructuring
+
+```js
+myObj = {
+  favoriteNumber: 42,
+  isDeveloper: true,
+  firstName: "Kyle",
+};
+
+const { favoriteNumber = 12 } = myObj;
+
+const {
+  isDeveloper: isDev,
+  firstName: firstName,
+  lastName: lname = "--missing--",
+} = myObj;
+
+favoriteNumber; // 42
+isDev; // true
+firstName; // "Kyle"
+lname; // "--missing--"
+```
+
+The above snippet combines object destructuring with variable declarations -- in this example, `const` is used, but `var` and `let` work as well -- but it's not inherently a declaration mechanism. Destructuring is about access and assignment (source to target), so it can operate against existing targets rather than declaring new ones:
+
+surrounding `( )` are required syntax here, when a declarator is not used.
+
+```js
+let fave;
+
+({ favoriteNumber: fave } = myObj);
+
+fave; // 42
+```
+
+<br>
+
+### Conditional Property Access
+
+**A?.B**
+
+This operator will check the left-hand side reference ( `A` ) to see if it's null'ish ( `null` or `undefined` ). If so, the rest of the property access expression is short-circuited (skipped), and `undefined` is returned as the result (even if it was `null` that was actually encountered!). Otherwise, `?.` will access the property just as a normal `.` operator would.
+
+Another form of the "optional chaining" operator is `?.[` , which is used when the property access you want to make conditional/safe requires a `[ .. ]` bracket.
+
+```js
+myObj["2 nicknames"]?.[0]; // "getify"
+```
+
+| WARNING: |
+| :------- |
+
+| There's a third form of this feature, named "optional call", which uses `?.(` as the operator. It's used for performing a non-null'ish check on a property before executing the function value in the property. For example, instead of m`yObj.someFunc(42)` , you an do `myObj.someFunc?.(42)` . The `?.(` checks to make sure `myObj.someFunc` is non-null'ish before invoking it (with the `(42)` part). While that may sound like a useful feature, I think this is dangerous enough to warrant complete avoidance of this form/construct.
+
+My concern is that `?.(` makes it seem as if we're ensuring that the function is "callable" before calling it, when in fact we're only checking if it's non-null'ish. Unlike `?.` which can allow a "safe" `.` access against a non-null'ish value that's also not an object, the `?.(` non-null'ish check isn't similarly "safe". If the property in question has any non-null'ish, non-function value in it, like `true` or `"Hello"` , the `(42)` call part will be invoked and yet throw a JS exception. |
