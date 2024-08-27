@@ -200,7 +200,73 @@ myObj.favoriteNumber = 123; // works fine
 
 Objects in JS behave according to a set of rules referred to as the **_Metaobject Protocol (MOP)_**.
 
+// TODO unfinished!
+
 <br>
 
-### [[Prototype]] Chain
+## [[Prototype]] Chain
 
+The `[[Prototype]]` is an internal linkage that an object gets by default when its created, pointing to another object.
+
+By default, all objects are `[[Prototype]]` -linked to the built-in object named `Object.prototype`
+
+The ability for `myObj.toString` to access the `toString` property even though it doesn't actually have it, is commonly referred to as "**inheritance**", or more specifically, "**prototypal inheritance**". The `toString` and `hasOwnProperty` properties, along with many others, are said to be "**inherited properties**" on `myObj` .
+
+<br>
+
+Some common "inherited" properties from `Object.prototype` include:
+
+- `constructor`
+- `__proto__`
+- `toString()`
+- `valueOf()`
+- `hasOwnProperty(..)`
+- `isPrototypeOf(..)`
+
+<br>
+
+- As of ES2022, JS has finally added the static version of this utility: `Object.hasOwn(..)`.
+
+```js
+myObj = {
+  favoriteNumber: 42,
+};
+
+Object.hasOwn(myObj, "favoriteNumber"); // true
+```
+
+- This form is now considered the more preferable and robust option, and the instance method ( `hasOwnProperty(..)` ) form should now generally be avoided.
+
+<br>
+
+### Creating An Object With A Different [[Prototype]]
+
+By default, any object you create in your programs will be `[[Prototype]]` -linked to that `Object.prototype` object.
+But you can create an object with a different linkage like this:
+
+```js
+myObj = Object.create(differentObj);
+```
+
+The `Object.create(..)` method takes its first argument as the value to set for the newly created object's `[[Prototype]]` .
+
+- If you want to create an object without any `[[Prototype]]`, you should pass `null` to `Object.create(..)`.
+
+Alternately, but less preferably, you can use the `{ .. }` literal syntax along with a special (and strange looking!) property, `__proto__` :
+
+```js
+myObj = {
+  __proto__: differentObj,
+  // .. the rest of the object definition
+};
+```
+
+Whether you use `Object.create(..)` or `__proto__` , the created object in question will **usually** be `[[Prototype]]` -linked to a different object than the default `Object.prototype` .
+
+<br>
+
+### Empty [[Prototype]] Linkage
+
+If you want to create an object without any [[Prototype]], you should pass `null` to `Object.create(..)` or you can set null to `__proto__` property.
+
+- These types of (useful!) objects are sometimes referred to in popular parlance as "**dictionary objects**".
