@@ -270,3 +270,46 @@ Whether you use `Object.create(..)` or `__proto__` , the created object in quest
 If you want to create an object without any [[Prototype]], you should pass `null` to `Object.create(..)` or you can set null to `__proto__` property.
 
 - These types of (useful!) objects are sometimes referred to in popular parlance as "**dictionary objects**".
+
+<br>
+
+### [[Prototype]] vs prototype
+
+`Object` is the `Object(..)` function; by default, all functions (which are themselves objects!) have such a `prototype` property on them, pointing at an object.
+
+The `prototype` property on a function doesn't define any linkage that the function itself experiences. Indeed, functions (as objects) have their own internal `[[Prototype]]` linkage somewhere else.
+
+Rather, the `prototype` property on a function refers to an object that should be linked TO by any other object that is created when calling that function with the `new` keyword:
+
+```js
+myObj = {};
+// is basically the same as:
+myObj = new Object();
+```
+
+Since the `{ .. }` object literal syntax is essentially the same as a `new Object()` call, the built-in object named/located at `Object.prototype` is used as the internal `[[Prototype]]` value for the new object we create and name `myObj`.
+
+But where do functions themselves (as objects!) link to, `[[Prototype]]` wise? They link to `Function.prototype` , yet another built-in object, located at the `prototype` property on the `Function(..)` function.
+
+In other words, you can think of functions themselves as having been "created" by a `new Function(..)` call, and then `[[Prototype]]` -linked to the `Function.prototype` object. This object contains properties/methods all functions "inherit" by default, such as `toString()` (to string serialize the source code of a function) and `call(..)` / `apply(..)` / `bind(..)`.
+
+<br>
+
+## Objects Behavior
+
+Properties on objects are internally defined and controlled by a "descriptor" metaobject, which includes attributes such as `value` (the property's present value) and `enumerable` (a boolean controlling whether the property is included in enumerable-only listings of properties/property names).
+
+<br>
+
+**Metaobject Protocol** (**MOP**):
+
+The way object and their properties work in JS is referred to as the "**metaobject protocol**" (**MOP**) .
+
+We can control the precise behavior of properties via `Object.defineProperty(..)` , as well as object-wide behaviors with `Object.freeze(..)`.
+
+We can hook into and override certain default behaviors on objects using special pre-defined Symbols.
+
+<br>
+
+**Prototypes** are internal linkages between objects that allow property or method access against one object -- if the property/method requested is absent -- to be handled by "delegating" that access lookup to another object.
+When the delegation involves a method, the context for the method to run in is shared from the initial object to the target object via the `this` keyword.
