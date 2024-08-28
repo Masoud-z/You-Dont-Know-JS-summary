@@ -200,7 +200,7 @@ myObj.favoriteNumber = 123; // works fine
 
 Objects in JS behave according to a set of rules referred to as the **_Metaobject Protocol (MOP)_**.
 
-// TODO unfinished!
+// TODO this part of the book is unfinished!
 
 <br>
 
