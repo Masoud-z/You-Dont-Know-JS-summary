@@ -217,26 +217,386 @@ The ability for methods of the same name, at different levels of the inheritance
 
 In addition to a subclass method accessing an inherited method definition (even if overridden on the subclass) via `super`. reference, a subclass `constructor` must manually invoke the inherited base class constructor via `super(..)` function invocation:
 
-    class Point2d {
-            x
-            y
-            constructor(x,y) {
-                    this.x = x;
-                    this.y = y;
-            }
+```js
+class Point2d {
+  x;
+  y;
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class Point3d extends Point2d {
+  z;
+  constructor(x, y, z) {
+    super(x, y);
+    this.z = z;
+  }
+
+  toString() {
+    console.log(`(${this.x},${this.y},${this.z})`);
+  }
+}
+
+var point = new Point3d(3, 4, 5);
+point.toString(); // (3,4,5)
+```
+
+<br>
+
+- An explicitly defined subclass constructor must call `super(..)` to run the inherited class's initialization, and that must occur before the subclass constructor makes any references to `this` or finishes/returns.
+
+- If you omit the subclass constructor, the default constructor automatically invokes `super()` for you.
+
+<br>
+
+If you define a field (public or private) inside a subclass, and explicitly define a `constructor(..)` for this subclass, the field initializations will be processed not at the top of the constructor, but between the `super(..)` call and any subsequent code in the constructor.
+
+```js
+class Point2d {
+  x;
+  y;
+  constructor(x, y) {
+    console.log("Running Point2d(..) constructor");
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class Point3d extends Point2d {
+  z = console.log("Initializing field 'z'");
+
+  constructor(x, y, z) {
+    console.log("Running Point3d(..) constructor");
+    super(x, y);
+
+    console.log(`Setting instance property 'z' to ${z}`);
+    this.z = z;
+  }
+  toString() {
+    console.log(`(${this.x},${this.y},${this.z})`);
+  }
+}
+var point = new Point3d(3, 4, 5);
+// Running Point3d(..) constructor
+// Running Point2d(..) constructor
+// Initializing field 'z'
+// Setting instance property 'z' to 5
+```
+
+<br>
+
+### Which Class?
+
+You may need to determine in a constructor if that class is being instantiated directly, or being instantiated from a subclass with a `super()` call. We can use a special "pseudo property" `new.Target` :
+
+```js
+class Point2d {
+  // ..
+  constructor(x, y) {
+    if (new.target === Point2) {
+      console.log("Constructing 'Point2d' instance");
     }
+  }
+}
 
-    class Point3d extends Point2d {
-            z
-            constructor(x,y,z) {
-                    super(x,y);
-                    this.z = z;
-            }
-
-            toString() {
-                    console.log(`(${this.x},${this.y},${this.z})`);
-            }
+class Point3d extends Point2d {
+  // ..
+  constructor(x, y, z) {
+    super(x, y);
+    if (new.target === Point3d) {
+      console.log("Constructing 'Point3d' instance");
     }
+  }
+}
 
-    var point = new Point3d(3,4,5);
-    point.toString(); // (3,4,5)
+var point = new Point2d(3, 4);
+// Constructing 'Point2d' instance
+
+var anotherPoint = new Point3d(3, 4, 5);
+// Constructing 'Point3d' instance
+```
+
+<br>
+
+### But Which Kind Of Instance?
+
+You may want to introspect a certain object instance to see if it's an instance of a specific class. We do this with the `instanceof` operator:
+
+```js
+class Point2d {
+  //...
+}
+
+class Point3d extends Point2d {
+  // ...
+}
+
+var point = new Point2d(3, 4);
+point instanceof Point2d; // true
+point instanceof Point3d; // false
+
+var anotherPoint = new Point3d(3, 4, 5);
+anotherPoint instanceof Point2d; // true
+anotherPoint instanceof Point3d; // true
+```
+
+If you instead wanted to check if the object instance was only and directly created by a certain class, check the instance's constructor property.
+
+```js
+point.constructor === Point2d; // true
+point.constructor === Point3d; // false
+
+anotherPoint.constructor === Point2d; // false
+anotherPoint.constructor === Point3d; // true
+```
+
+<br>
+
+### "Inheritance" Is Sharing, Not Copying
+
+```js
+class Point2d {
+  x;
+  y;
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class Point3d extends Point2d {
+  z;
+  constructor(x, y, z) {
+    super(x, y);
+    this.z = z;
+  }
+  toString() {
+    console.log(`(${this.x},${this.y},${this.z})`);
+  }
+}
+
+var anotherPoint = new Point3d(3, 4, 5);
+```
+
+If you inspect the `anotherPoint` object, you'll see it only has the `x` , `y` , and `z` properties (instance members) on it, but not the `toString()` method:
+
+```js
+Object.hasOwn(anotherPoint, "x"); // true
+Object.hasOwn(anotherPoint, "y"); // true
+Object.hasOwn(anotherPoint, "z"); // true
+Object.hasOwn(anotherPoint, "toString"); // false
+```
+
+Where is that `toString()` method located? On the prototype object:
+
+```js
+Object.hasOwn(Point3d.prototype, "toString"); // true
+```
+
+And `anotherPoint` has access to that method via its `[[Prototype]]` linkage. In other words, the prototype objects share access to their method(s) with the subclass(es) and instance(s). The method(s) stay in place, and are not copied down the inheritance chain.
+
+<br>
+
+- As nice as the class syntax is, don't forget what's really happening under the syntax: JS is just wiring up objects to each other along a `[[Prototype]]` chain.
+
+<br>
+
+## Static Class Behavior
+
+We've so far emphasized two different locations for data or behavior (methods) to reside:
+on the constructor's prototype, or on the instance. But there's a third option: **on the constructor (function object) itself**.
+
+All class-defined methods are "real" functions residing on the constructor's prototype, and you could therefore invoke them.
+
+So, how does a `class` system enable defining such data and behavior that should be available with a class but independent of (unaware of) instantiated objects?
+`Static properties and functions`.
+
+We use the `static` keyword in our class bodies to distinguish these definitions:
+
+```js
+class Point2d {
+  // class statics
+  static origin = new Point2d(0, 0);
+
+  static distance(point1, point2) {
+    return Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
+  }
+
+  // instance members and methods
+  x;
+  y;
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  toString() {
+    return `(${this.x},${this.y})`;
+  }
+}
+
+console.log(`Starting point: ${Point2d.origin}`);
+// Starting point: (0,0)
+var next = new Point2d(3, 4);
+
+console.log(`Next point: ${next}`);
+// Next point: (3,4)
+
+console.log(`Distance: ${Point2d.distance(Point2d.origin, next)}`);
+// Distance: 5
+```
+
+Don't forget that when you use the `class` syntax, the name `Point2d` is actually the name of a constructor function that JS defines. So `Point2d.origin` is just a regular property access on that function object. That's what I meant at the top of this section when I referred to a third location for storing things related to classes; in JS, `static` s are stored as properties on the constructor function. Take care not to confuse those with properties stored on the constructor's prototype (methods) and properties stored on the instance (members).
+
+<br>
+
+### Static Property Initializations
+
+The value in a static initialization ( `static whatever = ..` ) can include `this` references, which refers to the class itself (actually, the constructor) rather than to an instance:
+
+```js
+class Point2d {
+  // class statics
+  static originX = 0;
+  static originY = 0;
+  static origin = new this(this.originX, this.originY);
+  // ..
+}
+```
+
+I don't recommend actually doing the `new this(..)` trick I've illustrated here. That's just for illustration purposes. The code would read more cleanly with `new Point2d(this.originX,this.originY)` , so prefer that approach.
+
+- class static initializations always run immediately after the `class` has been defined.
+
+<br>
+
+Recently, the `static` keyword was extended so it can now define a block inside the class body for more sophisticated initialization of `static` s:
+
+```js
+class Point2d {
+  // class statics
+  static origin = new Point2d(0, 0);
+  static distance(point1, point2) {
+    return Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
+  }
+
+  // static initialization block (as of ES2022)
+  static {
+    let outerPoint = new Point2d(6, 8);
+    this.maxDistance = this.distance(this.origin, outerPoint);
+  }
+  // ..
+}
+Point2d.maxDistance; // 10
+```
+
+The `let outerPoint = ..` here is not a special class feature; it's exactly like a normal `let` declaration in any normal block of scope.
+
+<br>
+
+### Static Inheritance
+
+Class statics are inherited by subclasses (obviously, as statics!), can be overridden, and `super` can be used for base class references (and static function polymorphism), all in much the same way as inheritance works with instance members/methods:
+
+```js
+  class Point2d {
+          static origin = /* .. */
+          static distance(x,y) { /* .. */ }
+          static {
+                  // ..
+                  this.maxDistance = /* .. */;
+          }
+          // ..
+  }
+
+  class Point3d extends Point2d {
+          // class statics
+          static origin = new Point3d(
+                  // here, `this.origin` references wouldn't
+                  // work (self-referential), so we use
+                  // `super.origin` references instead
+                  super.origin.x, super.origin.y, 0
+          )
+
+          static distance(point1,point2) {
+                  // here, super.distance(..) is Point2d.distance(..),
+                  // if we needed to invoke it
+                  return Math.sqrt(
+                          ((point2.x - point1.x) ** 2) +
+                          ((point2.y - point1.y) ** 2) +
+                          ((point2.z - point1.z) ** 2)
+                  );
+          }
+
+          // instance members/methods
+          z
+          constructor(x,y,z) {
+                  super(x,y); // <-- don't forget this line!
+                  this.z = z;
+          }
+
+          toString() {
+                  return `(${this.x},${this.y},${this.z})`;
+          }
+  }
+
+  Point2d.maxDistance; // 10
+  Point3d.maxDistance; // 10
+```
+
+Any time you define a subclass constructor, you'll need to call `super(..)` in it, usually as the first statement. I find that all too easy to forget.
+
+The static "inheritance" is not a copying of these static properties/functions from base class to subclass; it's sharing via the `[[Prototype]]` chain.
+
+<br>
+
+## Private Class Behavior
+
+Private members/methods are private **only to the class they're defined** in, and **are not inherited in any way by a subclass**.
+
+<br>
+
+### Private Members/Methods
+
+```js
+class Point2d {
+  // statics
+  static samePoint(point1, point2) {
+    return point1.#ID === point2.#ID;
+  }
+
+  // privates
+  #ID = null;
+  #assignID() {
+    this.#ID = Math.round(Math.random() * 1e9);
+  }
+
+  // publics
+  x;
+  y;
+
+  constructor(x, y) {
+    this.#assignID();
+    this.x = x;
+    this.y = y;
+  }
+}
+```
+
+- Unlike public fields/instance members, private fields/instance members must be declared in the `class` body.
+
+- private fields can be re-assigned, they cannot be `delete` d from an instance, the way a public field/class member can.
+
+<br>
+
+### Subclassing + Privates
+
+if you invoke an inherited method in a subclass, and that inherited method in turn accesses/invokes privates in its host (base) class, this works fine.
+
+- The inherited function reference is the exact same function as the base function reference;
+
+<br>
+
+### Existence Check
