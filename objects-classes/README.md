@@ -4,6 +4,10 @@
 
 # <a href="https://github.com/getify/You-Dont-Know-JS/tree/2nd-ed/objects-classes">Book repo</a>
 
+| NOTE:            |
+| :--------------- |
+| Original book is in progress |
+
 ---
 
 > [!CAUTION]
