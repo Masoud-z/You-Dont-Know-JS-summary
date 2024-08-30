@@ -600,3 +600,281 @@ if you invoke an inherited method in a subclass, and that inherited method in tu
 <br>
 
 ### Existence Check
+
+Keep in mind that only the class itself knows about, and can therefore check for, such a private field/method.
+
+You may want to check to see if a private field/method exists on an object instance. For example (as shown below), you may have a static function or method in a class, which receives an external object reference passed in. To check to see if the passed-in object reference is of this same class (and therefore has the same private members/methods in it), you basically need to do a "brand check" against the object. Such a check could be rather convoluted, because if you access a private field that doesn't already exist on the object, you get a JS exception thrown, requiring ugly try..catch logic.
+
+There's a cleaner approach, so called an "**ergonomic brand check**", using the in keyword:
+
+```js
+class Point2d {
+  // statics
+  static samePoint(point1, point2) {
+    // "ergonomic brand checks"
+    if (#ID in point1 && #ID in point2) {
+      return point1.#ID === point2.#ID;
+    }
+
+    return false;
+  }
+
+  // privates
+  #ID = null;
+  #assignID() {
+    this.#ID = Math.round(Math.random() * 1e9);
+  }
+
+  // publics
+  x;
+  y;
+
+  constructor(x, y) {
+    this.#assignID();
+    this.x = x;
+    this.y = y;
+  }
+}
+
+var one = new Point2d(3, 4);
+var two = new Point2d(3, 4);
+Point2d.samePoint(one, two); // false
+Point2d.samePoint(one, one); // true
+```
+
+<br>
+
+### Private Statics
+
+Static properties and functions can also use # to be marked as private:
+
+```js
+class Point2d {
+  static #errorMsg = "Out of bounds.";
+  static #printError() {
+    console.log(`Error: ${this.#errorMsg}`);
+  }
+
+  // publics
+  x;
+  y;
+  constructor(x, y) {
+    if (x > 100 || y > 100) {
+      Point2d.#printError();
+    }
+    this.x = x;
+    this.y = y;
+  }
+}
+var one = new Point2d(30, 400);
+// Error: Out of bounds.
+```
+
+- private statics are similarly not-inherited by subclasses just as private members/methods are not.
+
+<br>
+
+### Gotcha: Subclassing With Static Privates and `this`
+
+```js
+class Point2d {
+  static #errorMsg = "Out of bounds.";
+  static printError() {
+    console.log(`Error: ${this.#errorMsg}`);
+  }
+  // ..
+}
+
+class Point3d extends Point2d {
+  // ..
+}
+
+Point2d.printError();
+// Error: Out of bounds.
+
+Point3d.printError === Point2d.printError;
+// true
+
+Point3d.printError();
+// TypeError: Cannot read private member #errorMsg
+// from an object whose class did not declare it
+```
+
+The `printError()` static is inherited (shared via `[[Prototype]]` ) from `Point2d` to `Point3d` just fine, which is why the function references are identical.
+
+Like the non-static snippet just above, you might have expected the `Point3d.printError()` static invocation to resolve via the `[[Prototype]]` chain to its original base class ( `Point2d` ) location, thereby letting it access the base class's `#errorMsg` static private.
+
+**But it fails**, as shown by the last statement in that snippet.
+
+**There's a fix, though**. In the static function, instead of `this.#errorMsg`, swap that for `Point2d.#errorMsg` , and now it works:
+
+```js
+class Point2d {
+  static #errorMsg = "Out of bounds.";
+  static printError() {
+    // the fixed reference vvvvvv
+    console.log(`Error: ${Point2d.#errorMsg}`);
+  }
+  // ..
+}
+
+class Point3d extends Point2d {
+  // ..
+}
+
+Point2d.printError();
+// Error: Out of bounds.
+
+Point3d.printError();
+// Error: Out of bounds. <-- phew, it works now!
+```
+
+If public static functions are being inherited, use the class name to access any private statics instead of using `this.` references. Beware that gotcha!
+
+<br>
+
+## Class Example
+
+```js
+class CalendarItem {
+  static #UNSET = Symbol("unset");
+  static #isUnset(v) {
+    return v === this.#UNSET;
+  }
+  static #error(num) {
+    return this[`ERROR_${num}`];
+  }
+  static {
+    for (let [idx, msg] of [
+      "ID is already set.",
+      "ID is unset.",
+      "Don't instantiate 'CalendarItem' directly.",
+    ].entries()) {
+      this[`ERROR_${(idx + 1) * 100}`] = msg;
+    }
+  }
+  static isSameItem(item1, item2) {
+    if (#ID in item1 && #ID in item2) {
+      return item1.#ID === item2.#ID;
+    } else {
+      return false;
+    }
+  }
+  #ID = CalendarItem.#UNSET;
+  #setID(id) {
+    if (CalendarItem.#isUnset(this.#ID)) {
+      this.#ID = id;
+    } else {
+      throw new Error(CalendarItem.#error(100));
+    }
+  }
+  description = null;
+  startDateTime = null;
+  constructor() {
+    if (new.target !== CalendarItem) {
+      let id = Math.round(Math.random() * 1e9);
+      this.#setID(id);
+    } else {
+      throw new Error(CalendarItem.#error(300));
+    }
+  }
+  getID() {
+    if (!CalendarItem.#isUnset(this.#ID)) {
+      return this.#ID;
+    } else {
+      throw new Error(CalendarItem.#error(200));
+    }
+  }
+  getDateTimeStr() {
+    if (this.startDateTime instanceof Date) {
+      return this.startDateTime.toUTCString();
+    }
+  }
+  summary() {
+    console.log(
+      `(${this.getID()}) ${this.description} at ${this.getDateTimeStr()}`
+    );
+  }
+}
+class Reminder extends CalendarItem {
+  #complete = false; // <-- no ASI, semicolon needed
+  [Symbol.toStringTag] = "Reminder";
+  constructor(description, startDateTime) {
+    super();
+    this.description = description;
+    this.startDateTime = startDateTime;
+  }
+  isComplete() {
+    return !!this.#complete;
+  }
+  markComplete() {
+    this.#complete = true;
+  }
+  summary() {
+    if (this.isComplete()) {
+      console.log(`(${this.getID()}) Complete.`);
+    } else {
+      super.summary();
+    }
+  }
+}
+class Meeting extends CalendarItem {
+  #getEndDateTimeStr() {
+    if (this.endDateTime instanceof Date) {
+      return this.endDateTime.toUTCString();
+    }
+  }
+  endDateTime = null; // <-- no ASI, semicolon needed
+  [Symbol.toStringTag] = "Meeting";
+  constructor(description, startDateTime, endDateTime) {
+    super();
+    this.description = description;
+    this.startDateTime = startDateTime;
+    this.endDateTime = endDateTime;
+  }
+  getDateTimeStr() {
+    return `${super.getDateTimeStr()} - ${this.#getEndDateTimeStr()}`;
+  }
+}
+
+var callMyParents = new Reminder(
+  "Call my parents to say hi",
+  new Date("July 7, 2022 11:00:00 UTC")
+);
+callMyParents.toString();
+// [object Reminder]
+callMyParents.summary();
+// (586380912) Call my parents to say hi at
+// Thu, 07 Jul 2022 11:00:00 GMT
+callMyParents.markComplete();
+callMyParents.summary();
+// (586380912) Complete.
+callMyParents instanceof Reminder;
+// true
+callMyParents instanceof CalendarItem;
+// true
+callMyParents instanceof Meeting;
+// false
+var interview = new Meeting(
+  "Job Interview: ABC Tech",
+  new Date("June 23, 2022 08:30:00 UTC"),
+  new Date("June 23, 2022 09:15:00 UTC")
+);
+interview.toString();
+// [object Meeting]
+interview.summary();
+// (994337604) Job Interview: ABC Tech at Thu,
+// 23 Jun 2022 08:30:00 GMT - Thu, 23 Jun 2022
+// 09:15:00 GMT
+interview instanceof Meeting;
+// true
+interview instanceof CalendarItem;
+//
+
+interview instanceof Reminder;
+// false
+Reminder.isSameItem(callMyParents, callMyParents);
+// true
+Meeting.isSameItem(callMyParents, interview);
+// false
+```
