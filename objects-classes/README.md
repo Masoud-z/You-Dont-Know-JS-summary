@@ -6,7 +6,7 @@
 
 | NOTE:            |
 | :--------------- |
-| Original book is in progress |
+| Work of the original book is in progress |
 
 ---
 
