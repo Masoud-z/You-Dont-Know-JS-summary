@@ -14,7 +14,7 @@ JS chooses the **value-copy** vs. **reference-copy** behavior based on the value
 
 - All functions by default reference an empty object at a property named prototype.
 
-<br>
+<br><br>
 
 ## So Many Function Forms
 

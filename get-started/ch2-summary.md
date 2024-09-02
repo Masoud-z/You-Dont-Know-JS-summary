@@ -4,7 +4,7 @@
 
 # Chapter 2: Surveying JS
 
-<br>
+<br><br>
 
 ## What is interpolation?
 
@@ -30,7 +30,7 @@ hitchhikersGuide[Symbol("meaning of life")];
 
 - Objects are more general: an unordered, keyed collection of any various values. In other words, you access the element by a string location name (aka “key” or “property”) rather than by its numeric position (as with arrays).
 
-<br>
+<br><br>
 
 ## What is coercion?
 
@@ -42,7 +42,7 @@ Converting from one value type to another, such as from string to number, is ref
 
 - Instead of “loose equality,” the `==` operator should be described as “**coercive equality**”.
 
-<br>
+<br><br>
 
 ## ES Modules
 

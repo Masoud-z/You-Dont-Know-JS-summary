@@ -4,7 +4,7 @@
 
 # Chapter 3: Digging to the Roots of JS
 
-<br>
+<br><br>
 
 ## What is spread ?
 
@@ -35,7 +35,7 @@ In both cases, the iterator-spread form of ... follows the iterator-consumption 
 
 - For the most part, all built-in iterables in JS have three iterator forms available: **keys-only (`keys()`)**, **values-only (`values()`)**, and **entries (`entries()`)**.
 
-<br>
+<br><br>
 
 ## What is closure?
 
@@ -45,7 +45,7 @@ Closure is when a function remembers and continues to access variables from outs
 
 - when a function is defined, it is attached to its enclosing scope via closure. Scope is the set of rules that controls how references to variables are resolved.
 
-<br>
+<br><br>
 
 ## this Keyword
 
@@ -104,7 +104,7 @@ A third way to invoke a function is with the `call(..)` method, which takes an o
 
 - The benefit of `this`-aware functions —and their dynamic context— is the ability to more flexibly re-use a single function with data from different objects. A function that closes over a scope can never reference a different scope or set of variables. But a function that has dynamic `this` context awareness can be quite helpful for certain tasks.
 
-<br>
+<br> <br>
 
 ## Prototypes
 
@@ -115,6 +115,8 @@ This prototype linkage occurs when
 an object is created; it’s linked to another object that already exists.
 
 A series of objects linked together via prototypes is called the “**prototype chain**”.
+ 
+<br><br>
 
 ## Object Linkage
 
@@ -130,7 +132,7 @@ otherHomework.topic; // "JS"
 
 - `Object.create(null)` creates an object that is not prototype linked anywhere, so it’s purely just a standalone object; in some circumstances, that may be preferable.
 
-<br>
+<br><br>
 
 ## `this` Revisited
 
@@ -150,7 +152,7 @@ mathHomework.study();
 // Please study Math
 ```
 
-<br>
+<br><br>
 
 ## Prototypes
 
@@ -161,7 +163,7 @@ This prototype linkage occurs when an object is created; it’s linked to anothe
 
 A series of objects linked together via prototypes is called the “**prototype chain**”.
 
-<br>
+<br><br>
 
 ## Object Linkage
 

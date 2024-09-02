@@ -4,7 +4,7 @@
 
 # Chapter 1: Object Foundations
 
-<br>
+<br><br>
 
 ## Objects As Containers
 
@@ -18,7 +18,7 @@ myObj = {
 };
 ```
 
-<br>
+<br><br>
 
 ## Defining Properties
 
@@ -146,7 +146,7 @@ For deep object duplication, the standard approaches have been:
 
 Recently, though, a third option has landed. This is not a JS feature, but rather a companion API provided to JS by environments like the web platform. Objects can be deep copied now using `structuredClone(..)`.
 
-<br>
+<br><br>
 
 ## Accessing Properties
 
@@ -245,7 +245,7 @@ This process is typically called "**boxing**", as in putting a value inside a "b
 
 Note that `null` and `undefined` can be object-ified, by calling `Object(null)` / `Object(undefined)`. However, JS does not automatically box these null'ish values, so property access against them will fail.
 
-<br>
+<br><br>
 
 ## Assigning Properties
 
@@ -270,7 +270,7 @@ Object.assign(
 );
 ```
 
-<br>
+<br><br>
 
 ## Deleting Properties
 
@@ -292,7 +292,7 @@ anotherObj.counter; // undefined
 
 - Deleting a property from an object is distinct from assigning it a value like `undefined` or `null` . A property assigned `undefined` , either initially or later, is still present on the object, and might still be revealed when enumerating the contents.
 
-<br>
+<br><br>
 
 ## Determining Container Contents
 
@@ -364,7 +364,7 @@ If we wanted to get all the keys in an object (enumerable or not)? `Object.getOw
 
 - there's no built-in API that will traverse the whole chain and return a list of the combined set of both owned and inherited contents.
 
-<br>
+<br><br>
 
 ## Temporary Containers
 
@@ -406,7 +406,7 @@ two; // "--Simpson--"
 three; // "getif"
 ```
 
-<br>
+<br><br>
 
 ## Containers Are Collections Of Properties
 

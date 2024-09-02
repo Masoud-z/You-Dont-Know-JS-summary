@@ -4,7 +4,7 @@
 
 # Chapter 1: How Objects Work
 
-<br>
+<br><br>
 
 ## Property Descriptors
 
@@ -104,7 +104,7 @@ The `configurable` attribute controls whether a property's descriptor can be red
 
 A property that's `configurable: false` is locked to its definition, and any further attempts to change it with `Object.defineProperty(..)` will fail. A non configurable property can still be assigned new values (via `=` ), as long as `writable: true` is still set on the property's descriptor.
 
-<br>
+<br><br>
 
 ## Object Sub-Types
 
@@ -152,7 +152,7 @@ extraInfo.set(help, "this is some important information");
 extraInfo.get(help); // "this is some important information"
 ```
 
-<br>
+<br><br>
 
 ## Object Characteristics
 
@@ -194,7 +194,7 @@ myObj.favoriteNumber = 123; // works fine
 
 - It prevents any changes to the object or to any of its direct properties (**_though, as mentioned earlier, the contents of any referenced other objects are unaffected_**).
 
-<br>
+<br><br>
 
 ## Extending The MOP
 
@@ -202,7 +202,7 @@ Objects in JS behave according to a set of rules referred to as the **_Metaobjec
 
 // TODO this part of the book is unfinished!
 
-<br>
+<br><br>
 
 ## [[Prototype]] Chain
 
@@ -293,7 +293,7 @@ But where do functions themselves (as objects!) link to, `[[Prototype]]` wise? T
 
 In other words, you can think of functions themselves as having been "created" by a `new Function(..)` call, and then `[[Prototype]]` -linked to the `Function.prototype` object. This object contains properties/methods all functions "inherit" by default, such as `toString()` (to string serialize the source code of a function) and `call(..)` / `apply(..)` / `bind(..)`.
 
-<br>
+<br><br>
 
 ## Objects Behavior
 
