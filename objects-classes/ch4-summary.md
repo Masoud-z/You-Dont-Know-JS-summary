@@ -432,3 +432,196 @@ relative/magic `this` keyword.
 <br>
 
 ### Lexical This
+
+The name for this pattern, by the way, is "lexical this", meaning a this that behaves like a lexical scope variable instead of like a dynamic context binding
+
+- In an `=>` function, the `this` keyword... **is not a keyword**. It's absolutely no different from any other variable, like `context` or `happyFace` or `foobarbaz` .
+
+```js
+function outer() {
+  console.log(this.value);
+  // define a return an "inner"
+  // function
+  var inner = () => {
+    console.log(this.value);
+  };
+  return inner;
+}
+
+var one = {
+  value: 42,
+};
+
+var two = {
+  value: "sad face",
+};
+
+var innerFn = outer.call(one); // 42
+
+innerFn.call(two); // 42 <-- not "sad face"
+```
+
+The `innerFn.call(two)` would, for any regular function definition, have resulted in "sad face" here. But since the `inner` function we defined and returned (and assigned to `innerFn` ) was an irregular `=>` arrow function, it has no special `this` behavior, but instead has "lexical this" behavior.
+
+When the `innerFn(..)` (aka `inner(..)` ) function is invoked, even with an explicit context assignment via `.call(..)` , that assignment is ignored.
+
+<br>
+
+When a `this` is encountered ( `this.value` ) inside an `=>` arrow function, `this` is treated like a normal lexical variable, not a special keyword. And since there is no `this` variable in that function itself, JS does what it always does with lexical variables: it goes up one level of lexical scope -- in this case, to the surrounding `outer(..)` function, and it checks to see if there's any registered `this` in that scope.
+
+<br>
+
+### Back To The... Button
+
+Hear me on `this`: the `=>` arrow function is not -- I repeat, not -- about typing fewer characters. **The primary point of the `=>` function being added to JS was to give us "lexical this" behavior** without having to resort to `var context = this` (or worse, `var self = this` ) style hacks.
+
+<br>
+
+### Confession Time
+
+I've said all along in this chapter, that how you write a function, and where you write the function, has nothing to do with how its `this` will be assigned.
+For regular functions, that's true. But when we consider an irregular `=>` arrow function, it's not entirely accurate anymore.
+
+When we write an `=>` arrow function, we know for sure that its `this` binding will exactly be the current `this` binding of whatever surrounding function is running, regardless of what the call-site of the `=>` arrow function looks like. So in other words, how we wrote the `=>` arrow function, and where we wrote it, does matter.
+
+- That doesn't fully answer the `this` question, though. It just shifts the question to **how the enclosing function was invoked**.
+
+<br>
+
+Since an `=>` arrow function never has a `this` -assigning call-site (no matter what), that call-site isn't relevant to the question. We have to keep stepping up the call stack until we find a function invocation that is `this` -assigning -- even if such invoked function is not itself `this` -aware.
+
+<br>
+
+#### Find The Right Call-Site
+
+Let me illustrate, with a convoluted mess of a bunch of nested functions/calls:
+
+```js
+globalThis.value = { result: "Sad face" };
+function one() {
+  function two() {
+    var three = {
+      value: { result: "Hmmm" },
+      fn: () => {
+        const four = () => this.value;
+        return four.call({
+          value: { result: "OK" },
+        });
+      },
+    };
+    return three.fn();
+  }
+  return two();
+}
+new one(); // ???
+```
+
+The call-stack for that new one() invocation is:
+
+```js
+four       |
+three.fn   |
+two        | (this = globalThis)
+one        | (this = {})
+[ global ] | (this = globalThis)
+```
+
+Since `four()` and `fn()` are both `=>` arrow functions, the `three.fn()` and `four.call(..)` call-sites are not `this` -assigning; thus, they're irrelevant for our query. What's the next invocation to consider in the call-stack? `two()` . That's a regular function (it can accept `this` -assignment), and the call-site matches the default context assignment rule (#4). Since we're not in strict-mode, `this` is assigned `globalThis` .
+
+When `four()` is running, `this` is just a normal variable. It looks then to its containing function ( `three.fn()` ), but it again finds a function with no `this` . So it goes up another level, and finds a `two()` regular function that has a `this` defined. And that `this` is `globalThis` . So the `this.value` expression resolves to `globalThis.value` , which returns us... `{ result: "Sad face" }` .
+
+<br>
+
+Choosing `this` -oriented code (even `class` es) means choosing both the flexibility it affords us, as well as needing to be comfortable navigating the call-stack to understand how it will behave.
+
+That's the only way to effectively write (and later read!) `this` -aware code.
+
+<br>
+
+### This Is Bound To Come Up
+
+In addition to `call(..)` / `apply(..)` -- these invoke functions, remember! -- JS functions also have a third utility built in, called `bind(..)` -- **which does not invoke the function**, just to be clear.
+
+The `bind(..)` utility defines a new wrapped/bound version of a function, where its `this` is preset and fixed, and cannot be overridden with a `call(..)` or `apply(..)` , or even an implicit context object at the call-site:
+
+```js
+this.submitBtn.addEventListener("click", this.clickHandler.bind(this), false);
+```
+
+Since I'm passing in a `this` -bound function as the event handler, it similarly doesn't matter how that utility tries to set a `this` , because I've already forced the `this` to be what I wanted: the value of `this` from the surrounding function invocation context.
+
+<br>
+
+#### Hardly New
+
+This pattern is often referred to as "hard binding", since we're creating a function reference that is strongly bound to a particular `this` . A lot of JS writings have claimed that the `=>` arrow function is essentially just syntax for the `bind(this)` hard-binding. It's not. Let's dig in.
+
+<br>
+
+If you were going to create a `bind(..)` utility, it might look kinda like `this`:
+
+```js
+function bind(fn, context) {
+  return function bound(...args) {
+    return fn.apply(context, args);
+  };
+}
+```
+
+Does that look familiar? It's using the good ol' fake "lexical this" hack. And under the covers, it's an _explicit context_ assignment, in this case via `apply(..)` .
+
+So wait... doesn't that mean we could just do it with an `=>` arrow function?
+
+```js
+function bind(fn, context) {
+  return (...args) => fn.apply(context, args);
+}
+```
+
+Eh... not quite. As with most things in JS, there's a bit of nuance. Let me illustrate:
+
+```js
+// candidate implementation, for comparison
+function fakeBind(fn, context) {
+  return (...args) => fn.apply(context, args);
+}
+// test subject
+function thisAwareFn() {
+  console.log(`Value: ${this.value}`);
+}
+// control data
+var obj = {
+  value: 42,
+};
+// experiment
+var f = thisAwareFn.bind(obj);
+var g = fakeBind(thisAwareFn, obj);
+
+f(); // Value: 42
+g(); // Value: 42
+
+new f(); // Value: undefined
+new g(); // <--- ???
+```
+
+First, look at the `new f()` call. That's admittedly a strange usage, to call `new` on a hardbound function. It's probably quite rare that you'd ever do so. But it shows something kind of interesting. Even though `f()` was hard-bound to a this context of `obj` , the new operator was able to hijack the hard-bound function's `this` and re-bind it to the newly created and empty object. That object has no value property, which is why we see "`Value: undefined`" printed out.
+
+Refer back to the four rules presented earlier in this chapter. Remember how I asserted their order-of-precedence, and `new` was at the top (#1), ahead of explicit `call(..)` / `apply(..)` assignment rule (#2)?
+
+Since we can sort of think of `bind(..)` as a variation of that rule, we now see that orderof-precedence proven. `new` is more precedent than, and can override, even a hard-bound function. Sort of makes you think the hard-bound function is maybe not so "hard"-bound, huh?!
+
+<br>
+
+But... what's going to happen with the `new g()` call, which is invoking new on the returned `=>` arrow function? Do you predict the same outcome as `new f()` ?
+
+Sorry to disappoint.
+
+That line will actually throw an exception, because **an `=>` function cannot be used with the `new` keyword**.
+
+But why? My best answer, not being authoritative on TC39 myself, is that **conceptually and actually, an `=>` arrow function is not a function with a hard-bound `this` , it's a function that has no `this` at all. As such, `new` makes no sense against such a function, so JS just disallows it**.
+
+- But the main point is: an `=>` arrow function is not a syntactic form of `bind(this)` .
+
+<br>
+
+### Losing This Battle
