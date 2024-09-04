@@ -625,3 +625,309 @@ But why? My best answer, not being authoritative on TC39 myself, is that **conce
 <br>
 
 ### Losing This Battle
+
+Presetting a `this` assignment, no matter how you do it, so that it's predictable, comes with a cost. A system level cost and a program maintenance/complexity cost. _It is **never** free_.
+
+One way of reacting to that fact is to decide, OK, we're just going to manufacture all those `this` -assigned function references once, ahead of time, up-front. That way, we're sure to reduce both the system pressure, and the code pressure, to a minimum. Sounds reasonable, right? Not so fast
+
+<br>
+
+#### Pre-Binding Function Contexts
+
+If you have a one-off function reference that needs to be `this` -bound, and you use an `=>` arrow or a `bind(this)` call, I don't see any problems with that.
+
+But if most or all of the `this` -aware functions in a segment of your code invoked in ways where the `this` isn't the predictable context you expect, and so you decide you need to hard-bind them all... I think that's a big warning signal that you're going about things the wrong way.
+
+Please recall the discussion in the "Avoid This" section from Chapter 3, which started with this snippet of code:
+
+```js
+class Point2d {
+  x = null;
+  getDoubleX = () => this.x * 2;
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  toString() {
+    /* .. */
+  }
+}
+var point = new Point2d(3, 4);
+```
+
+Now imagine we did this with that code:
+
+```js
+const getX = point.getDoubleX;
+// later, elsewhere
+getX(); // 6
+```
+
+As you can see, the problem we were trying to solve is the same as we've been dealing with here in this chapter. It's that we wanted to be able to invoke a function reference like `getX()` , and have that mean and behave like `point.getDoubleX()` . But `this` rules on regular functions don't work that way.
+
+So we used an `=>` arrow function. No big deal, right!?
+Wrong.
+The real root problem is that we want two conflicting things out of our code, and we're trying to use the same hammer for both nails.
+
+<br>
+
+We want to have a `this` -aware method stored on the class prototype, so that there's only one definition for the function, and all our subclasses and instances nicely share that same function. And the way they all share is through the power of the dynamic `this` binding.
+
+But at the same time, we also want those function references to magically stay `this` - assinged to our instance when we pass those function references around and other code is in charge of the call-site
+
+In other words, sometimes we want something like `point.getDoubleX` to mean, "give me a reference that's `this` -assigned to point ", and other times we want the same expression `point.getDoubleX` to mean, give me a dynamic `this` -assignable function reference so it can properly get the context I need it to at this moment.
+
+What JS authors of `class` -oriented code often run up against, sooner or later, is this exact tension. And you know what they do?
+
+They don't consider the costs of simply pre-binding all the class's `this` -aware methods as instead `=>` arrow functions in member properties. They don't realize that it's completely defeated the entire purpose of the `[[Prototype]]` chain. And they don't realize that if fixed-context is what they really need, there's an entirely different mechanism in JS that is better suited for that purpose.
+
+<br>
+
+#### Take A More Critical Look
+
+```js
+class Point2d {
+  x = null;
+  y = null;
+  getDoubleX = () => this.x * 2;
+  toString = () => `(${this.x},${this.y})`;
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+var point = new Point2d(3, 4);
+var anotherPoint = new Point2d(5, 6);
+var f = point.getDoubleX;
+var g = anotherPoint.toString;
+f(); // 6
+g(); // (5,6)
+```
+
+I say, "ick!", to the hard-bound `this` -aware methods `getDoubleX()` and `toString()` there. To me, that's a code smell. But here's an even worse approach that has been favored by many developers in the past:
+
+```js
+class Point2d {
+  x = null;
+  y = null;
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.getDoubleX = this.getDoubleX.bind(this);
+    this.toString = this.toString.bind(this);
+  }
+  getDoubleX() {
+    return this.x * 2;
+  }
+  toString() {
+    return `(${this.x},${this.y})`;
+  }
+}
+var point = new Point2d(3, 4);
+var anotherPoint = new Point2d(5, 6);
+var f = point.getDoubleX;
+var g = anotherPoint.toString;
+f(); // 6
+g(); // (5,6)
+```
+
+Double ick.
+
+In both cases, you're using a `this` mechanism but completely betraying/neutering it, by taking away all the powerful dynamicism of `this` . You really should at least be contemplating `this` alternate approach, which skips the whole `this` mechanism altogether:
+
+```js
+function Point2d(px, py) {
+  var x = px;
+  var y = py;
+  return {
+    getDoubleX() {
+      return x * 2;
+    },
+    toString() {
+      return `(${x},${y})`;
+    },
+  };
+}
+var point = Point2d(3, 4);
+var anotherPoint = Point2d(5, 6);
+var f = point.getDoubleX;
+var g = anotherPoint.toString;
+f(); // 6
+g(); // (5,6)
+```
+
+You see? No ugly or complex `this` to clutter up that code or worry about corner cases for. Lexical scope is super straightforward and intuitive. When all we want is for most/all of our function behaviors to have a fixed and predictable context, the most appropriate solution, the most straightforward and even performant solution, is lexical variables and scope closure.
+
+When you go to all to the trouble of sprinkling this references all over a piece of code, and then you cut off the whole mechanism at the knees with `=>` "lexical this" or `bind(this)` , you chose to make the code more verbose, more complex, more overwrought. And you got nothing out of it that was more beneficial, except to follow the `this` (and `class` ) bandwagon.
+
+<br><br>
+
+## Variations
+
+<br>
+
+### Indirect Function Calls
+
+Recall this example from earlier in the chapter?
+
+```js
+var point = {
+  x: null,
+  y: null,
+  init(x, y) {
+    this.x = x;
+    this.y = y;
+  },
+  rotate(angleRadians) {
+    /* .. */
+  },
+  toString() {
+    /* .. */
+  },
+};
+var init = point.init;
+init(3, 4); // broken!
+```
+
+This is broken because the init(3,4) call-site doesn't provide the necessary `this` - assignment signal. But there's other ways to observe a similar breakage.
+
+For example:
+
+```js
+(1, point.init)(3, 4); // broken!
+```
+
+This strange looking syntax is first evaluating an expression `(1,point.init)` , which is a comma series expression. The result of such an expression is the final evaluated value, which in this case is the function reference (held by `point.init` ).
+
+So the outcome puts that function reference onto the expression stack, and then invokes that value with (3,4) . That's an indirect invocation of the function. And what's the result?
+
+It actually matches the default context assignment rule (#4) we looked at earlier in the chapter. Thus, in non-strict mode, the `this` for the `point.init(..)` call will be `globalThis` .
+
+Had we been in strict-mode, it would have been `undefined` , and the `this.x = x` operation would then have thrown an exception for invalidly accessing the `x` property on the `undefined` value.
+
+There's several different ways to get an indirect function invocation. For example:
+
+```js
+(() => point.init)()(3, 4); // broken!
+```
+
+And another example of indirect function invocation is the Immediately Invoked Function Expression (IIFE) pattern:
+
+```js
+(function () {
+  // `this` assigned via "default" rule
+})();
+```
+
+As you can see, the function expression value is put onto the expression stack, and then it's invoked with the `()` on the end.
+
+But what about this code:
+
+<!-- TODO: Delete  // prettier-ignore from github itself when you finished working on the book-->
+
+```js
+// prettier-ignore
+(point.init)(3,4);
+```
+
+What will be the outcome of that code?
+By the same reasoning we've seen in the previous examples, it stands to reason that the `point.init` expression puts the function value onto the expression stack, and then invoked indirectly with (3,4) .
+
+Not quite, though! JS grammar has a special rule to handle the invocation form `(someIdentifier)(..)` as if it had been `someIdentifier(..)` (without the `(..)` around the identifier name).
+
+Wondering why you might want to ever force the default context for `this` assignment via an indirect function invocation?
+
+<br>
+
+### Accessing globalThis
+
+Before we answer that, let's introduce another way of performing indirect function this assignment. Thus far, the indirect function invocation patterns shown are sensitive to strict-mode. But what if we wanted an indirect function `this` assignment that doesn't respect strict-mode.
+
+The `Function(..)` constructor takes a string of code and dynamically defines the equivalent function. However, it always does so as if that function had been declared in the global scope. And furthermore, it ensures such function does not run in strict-mode, no matter the strict-mode status of the program. That's the same outcome as running an indirect
+
+One niche usage of such strict-mode agnostic indirect function this assignment is for getting a reliable reference to the true global object prior to when the JS specification actually defined the `globalThis` identifier (for example, in a polyfill for it):
+
+```js
+"use strict";
+var gt = new Function("return this")();
+gt === globalThis; // true
+```
+
+In fact, a similar outcome, using the comma operator trick (see previous section) and eval(..) :
+
+```js
+"use strict";
+function getGlobalThis() {
+  return (1, eval)("this");
+}
+g;
+etGlobalThis() === globalThis; // true
+```
+
+Unfortunately, the `new Function(..)` and `(1,eval)(..)` approaches both have an important limitation: that code will be blocked in browser-based JS code if the app is served with certain Content-Security-Policy (CSP) restrictions, disallowing dynamic code evaluation (for security reasons).
+
+Can we get around this? Yes, mostly.
+
+The JS specification says that a getter function defined on the global object, or on any object that inherits from it (like `Object.prototype` ), runs the getter function with this context assigned to globalT`his , regardless of the program's strict-mode.
+
+```js
+// Adapted from: https://mathiasbynens.be/notes/globalthis#robust-polyfill
+function getGlobalThis() {
+  Object.defineProperty(Object.prototype, "__get_globalthis__", {
+    get() {
+      return this;
+    },
+    configurable: true,
+  });
+  var gt = __get_globalthis__;
+  delete Object.prototype.__get_globalthis__;
+  return gt;
+}
+g;
+etGlobalThis() === globalThis; // true
+```
+
+<br>
+
+### Template Tag Functions
+
+There's one more unusual variation of function invocation we should cover: tagged
+template functions.
+
+Template strings -- what I prefer to call interpolated literals -- can be "tagged" with a prefix function, which is invoked with the parsed contents of the template literal:
+
+```js
+function tagFn(/* .. */) {
+  // ..
+}
+tagFn`actually a function invocation!`;
+```
+
+As you can see, there's no `(..)` invocation syntax, just the tag function ( `tagFn` ) appearing before the `` `template literal` `` ; whitespace is allowed between them, but is very uncommon.
+
+Despite the strange appearance, the function `tagFn(..)` will be invoked. It's passed the list of one or more string literals that were parsed from the template literal, along with any interpolated expression values that were encountered.
+
+We're not going to cover all the ins and outs of tagged template functions -- they're seriously one of the most powerful and interesting features ever added to JS -- but since we're talking about `this` assignment in function invocations, for completeness sake we need to talk about how `this` will be assigned.
+
+The other form for tag functions you may encounter is:
+
+```js
+var someObj = {
+  tagFn() {
+    /* .. */
+  },
+};
+someObj.tagFn`also a function invocation!`;
+```
+
+Here's the easy explanation: `` tagFn`..` `` and `` someObj.tagFn`..` `` will each have `this` - assignment behavior corresponding to call-sites as `tagFn(..)` and `someObj.tagFn(..)` , respectively. In other words, `` tagFn`..` `` behaves by the default context assignment rule (#4), and `` someObj.tagFn`..` `` behaves by the implicit context assignment rule (#3).
+
+Luckily for us, we don't need to worry about the `new` or` call(..)` / `apply(..)` assignment rules, as those forms aren't possible with tag functions.
+
+It should be pointed out that it's pretty rare for a tagged template literal function to be defined as `this` -aware, so it's fairly unlikely you'll need to apply these rules. But just in case, now you're in the know.
+
+<br><br>
+
+## Stay Aware
+
+The lesson here is that you should be intentional and aware of all aspects of this before you go sprinkling it about your code. Make sure you're using it most effectively and taking full advantage of this important pillar of JS
