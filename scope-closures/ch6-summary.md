@@ -4,7 +4,7 @@
 
 # Chapter 6: Limiting Scope Exposure
 
-<br>
+<br><br>
 
 ## Least Exposure
 

@@ -4,7 +4,7 @@
 
 # Chapter 7: Using Closures
 
-<br>
+<br><br>
 
 ## Closure:
 

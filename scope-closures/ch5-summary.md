@@ -4,7 +4,7 @@
 
 # Chapter 5: The (Not So) Secret Lifecycle of Variables
 
-<br>
+<br><br>
 
 ## When Can I Use a Variable?
 

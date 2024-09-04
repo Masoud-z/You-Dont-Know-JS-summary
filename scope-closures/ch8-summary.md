@@ -4,7 +4,7 @@
 
 # Chapter 8: The Module Pattern
 
-<br>
+<br><br>
 
 ## Encapsulation and Least Exposure (POLE)
 

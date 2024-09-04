@@ -4,7 +4,7 @@
 
 # Chapter 3: Classy Objects
 
-<br>
+<br><br>
 
 ## When Should I Class-Orient My Code?
 

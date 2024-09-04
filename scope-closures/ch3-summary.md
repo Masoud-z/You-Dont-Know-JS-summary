@@ -4,7 +4,7 @@
 
 # Chapter 3: The Scope Chain
 
-<br>
+<br><br>
 
 ## What is scope chain?
 

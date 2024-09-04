@@ -4,7 +4,7 @@
 
 # Chapter 1: What's the Scope
 
-<br>
+<br><br>
 
 - JS is in fact parsed/compiled in a separate phase before execution begins.
 

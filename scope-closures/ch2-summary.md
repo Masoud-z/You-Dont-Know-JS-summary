@@ -4,7 +4,7 @@
 
 # Chapter 2: Illustrating Lexical Scope
 
-<br>
+<br><br>
 
 - scope is determined during code compilation, a model called “**lexical scope**”. <ins>The term “**lexical**” refers to the first stage of compilation (lexing/parsing)</ins>.
 

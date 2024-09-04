@@ -4,7 +4,7 @@
 
 # Chapter 4: This Works
 
-<br>
+<br><br>
 
 The determination of what value (usually, object) `this` points at is not made at author time, but rather determined at runtime.
 

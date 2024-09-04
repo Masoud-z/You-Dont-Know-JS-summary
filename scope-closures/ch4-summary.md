@@ -4,7 +4,7 @@
 
 # Chapter 4: Around the Global Scope
 
-<br>
+<br><br>
 
 ## Why Global Scope?
 
