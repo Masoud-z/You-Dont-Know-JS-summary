@@ -2,7 +2,7 @@
 
 <br>
 
-# Chapter 1: How Objects Work
+# Chapter 2: How Objects Work
 
 <br><br>
 

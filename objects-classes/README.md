@@ -4,8 +4,8 @@
 
 # <a href="https://github.com/getify/You-Dont-Know-JS/tree/2nd-ed/objects-classes">Book repo</a>
 
-| NOTE:            |
-| :--------------- |
+| NOTE:                                    |
+| :--------------------------------------- |
 | Work of the original book is in progress |
 
 ---
@@ -19,3 +19,7 @@
 <br>
 
 - [Chapter 1: Object Foundations - Summary](ch1-summary.md)
+- [Chapter 2: How Objects Work - Summary](ch2-summary.md)
+- [Chapter 3: Classy Objects - Summary](ch3-summary.md)
+- [Chapter 4: This Works - Summary](ch4-summary.md)
+- [Chapter 5: Delegation - Summary](ch5-summary.md)
