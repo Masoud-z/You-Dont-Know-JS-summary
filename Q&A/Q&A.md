@@ -1,4 +1,4 @@
-# Important Questions that You Don't Know JS Answers
+# Some Questions that You Don't Know JS Answers
 
 <br><br>
 
