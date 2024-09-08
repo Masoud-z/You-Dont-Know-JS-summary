@@ -15,6 +15,8 @@ This is the **summary** of famous book series <a href="https://github.com/getify
 <a href="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/scope%20&%20closures/README.md"><img src="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/scope%20%26%20closures/cover.jpg" width="75"></a>&nbsp;&nbsp;
 <a href="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/this%20&%20object%20prototypes/README.md"><img src="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/this%20%26%20object%20prototypes/cover.jpg" width="75"></a>&nbsp;&nbsp;
 <a href="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/types%20&%20grammar/README.md"><img src="types-grammar/images/cover.jpg" width="75"></a>&nbsp;&nbsp;
+<a href="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/async%20&%20performance/README.md"><img src="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/async%20%26%20performance/cover.jpg" width="75"></a>&nbsp;&nbsp;
+<a href="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/es6%20&%20beyond/README.md"><img src="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/es6%20%26%20beyond/cover.jpg" width="75"></a>&nbsp;&nbsp;
 
 ---
 
