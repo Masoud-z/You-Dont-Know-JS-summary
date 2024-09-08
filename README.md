@@ -1,16 +1,19 @@
-# You Don't Know JS Yet <ins>**_Summary_**</ins>
+# You Don't Know JS (Yet) <ins>**_Summary_**</ins>
 
-This is the summary of famous book series <a href="https://github.com/getify/You-Dont-Know-JS">**_You Don't Know JS Yet_**</a> by <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Kyle Simpson</a>.
+This is the **summary** of famous book series <a href="https://github.com/getify/You-Dont-Know-JS">**_You Don't Know JS (Yet)_**</a> by <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Kyle Simpson</a>.
 
-2nd Edition:
+[You Don't Know JS Yet - 2nd Edition:](https://github.com/getify/You-Dont-Know-JS/tree/2nd-ed)
 
 <a href="https://leanpub.com/ydkjsy-get-started"><img src="get-started/images/cover.png" width="75"></a>&nbsp;&nbsp;
 <a href="https://leanpub.com/ydkjsy-scope-closures"><img src="scope-closures/images/cover.png" width="75"></a>&nbsp;&nbsp;
 
 ---
 
-1st Edition:
+[You Don't Know JS - 1st Edition:](https://github.com/getify/You-Dont-Know-JS/tree/1st-ed)
 
+<a href="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/up%20&%20going/README.md"><img src="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/up%20%26%20going/cover.jpg" width="75"></a>&nbsp;&nbsp;
+<a href="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/scope%20&%20closures/README.md"><img src="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/scope%20%26%20closures/cover.jpg" width="75"></a>&nbsp;&nbsp;
+<a href="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/this%20&%20object%20prototypes/README.md"><img src="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/this%20%26%20object%20prototypes/cover.jpg" width="75"></a>&nbsp;&nbsp;
 <a href="https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/types%20&%20grammar/README.md"><img src="types-grammar/images/cover.jpg" width="75"></a>&nbsp;&nbsp;
 
 ---
