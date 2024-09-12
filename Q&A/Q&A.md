@@ -27,3 +27,11 @@ It will actually throw an exception, because **an `=>` function cannot be used w
 <br><br>
 
 ---
+
+## Various DOM query operations return lists of DOM elements that are not true arrays, how we can convert it to ad array?
+
+There are different ways to do it but one of the easy ways is using **`Array.from(..)`**
+
+```js
+var arr = Array.from(arguments);
+```
