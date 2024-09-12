@@ -104,3 +104,84 @@ If you use `typeof` against a variable, it’s not asking “What’s the type o
 
 ### undefined Versus “undeclared”
 
+Variables that have no value currently actually have the undefined value. Calling `typeof` against such variables will return "`undefined`":
+
+```js
+var a;
+typeof a; // "undefined"
+
+var b = 42;
+var c;
+// later
+b = c;
+typeof b; // "undefined"
+typeof c; // "undefined"
+```
+
+An “`undefined`” variable is one that has been declared in the accessible scope, but at the moment has no other value in it. By contrast, an “**_undeclared_**” variable is one that has not been formally declared in the accessible scope.
+
+Consider:
+
+```js
+var a;
+a; // undefined
+b; // ReferenceError: b is not defined
+```
+
+- “`undefined`” and “**_is not defined_**” are very different things.
+
+There’s also a special behavior associated with `typeof` as it relates to undeclared variables that even further reinforces the confusion. Consider:
+
+```js
+var a;
+typeof a; // "undefined"
+typeof b; // "undefined"
+```
+
+The `typeof` operator returns "`undefined`" even for “**_undeclared_**” (or “**_not defined”_**) variables. Notice that there was no error thrown when we executed `typeof b`, even though `b` is an undeclared variable. This is a special safety guard in the behavior of typeof.
+
+<br>
+
+### typeof Undeclared
+
+Nevertheless, this safety guard is a useful feature when dealing with JavaScript in the browser, where multiple script files can load variables into the shared global namespace.
+
+As a simple example, imagine having a “debug mode” in your program that is controlled by a global variable (flag) called `DEBUG`. You’d want to check if that variable was declared before performing a debug task like logging a message to the console. A top-level global `var DEBUG = true` declaration would only be included in a “debug.js” file, which you only load into the browser when you’re in development/testing, but not in production.
+
+However, you have to take care in how you check for the global `DEBUG` variable in the rest of your application code, so that you don’t throw a `ReferenceError`. The safety guard on `typeof` is our friend in this case:
+
+```js
+// oops, this would throw an error!
+if (DEBUG) {
+  console.log("Debugging is starting");
+}
+// this is a safe existence check
+if (typeof DEBUG !== "undefined") {
+  console.log("Debugging is starting");
+}
+```
+
+This sort of check is useful even if you’re not dealing with user defined variables (like `DEBUG`). If you are doing a feature check for a built-in API, you may also find it helpful to check without throwing an error:
+
+```js
+if (typeof atob === "undefined") {
+  atob = function () {
+    /*..*/
+  };
+}
+```
+
+Unlike referencing undeclared variables, there is no ReferenceError thrown if you try to access an object property (even on the global window object) that doesn’t exist.
+
+<br><br>
+
+## Review
+
+JavaScript has seven built-in types: `null`, `undefined`, `boolean`, `number`, `string`, `object`, and `symbol`. They can be identified by the `typeof` operator.
+
+**Variables don’t have types**, **_but the values in them do_**. These types define the intrinsic behavior of the values.
+
+Many developers will assume “undefined” and “undeclared” are roughly the same thing, but in JavaScript, they’re quite different.
+`undefined` is a value that a declared variable can hold. “Undeclared” means a variable has never been declared.
+
+JavaScript unfortunately kind of conflates these two terms, not only in its error messages (“ReferenceError: a is not defined”) but also in the return values of `typeof`, which is "`undefined`" for both cases
