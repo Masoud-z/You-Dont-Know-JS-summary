@@ -449,3 +449,82 @@ if (!Object.is) {
 <br><br>
 
 ## Value Versus Reference
+
+The type of the value solely controls whether that value will be assigned by value copy or by reference-copy.
+
+Simple values (aka scalar primitives) are always assigned/passed by value-copy: `null`, `undefined`, `string`, `number`, `boolean`, and ES6’s `symbol`.
+
+Compound values—objects (including `arrays`, and all boxed object wrappers) and functions—always create a copy of the reference on assignment or passing.
+
+Since references point to the values themselves and not to the variables, you cannot use one reference to change where another reference is pointed:
+
+```js
+var a = [1, 2, 3];
+var b = a;
+a; // [1,2,3]
+b; // [1,2,3]
+
+// later
+b = [4, 5, 6];
+a; // [1,2,3]
+b; // [4,5,6]
+```
+
+The most common way such confusion happens is with function parameters:
+
+```js
+function foo(x) {
+  x.push(4);
+  x; // [1,2,3,4]
+  // later
+  x = [4, 5, 6];
+  x.push(7);
+  x; // [4,5,6,7]
+}
+
+var a = [1, 2, 3];
+foo(a);
+a; // [1,2,3,4] not [4,5,6,7]
+```
+
+To accomplish changing a to have the [4,5,6,7] value contents, you can’t create a new array and assign—you must modify the existing array value:
+
+```js
+function foo(x) {
+  x.push(4);
+  x; // [1,2,3,4]
+
+  // later
+  x.length = 0; // empty existing array in-place
+  x.push(4, 5, 6, 7);
+  x; // [4,5,6,7]
+}
+
+var a = [1, 2, 3];
+foo(a);
+a; // [4,5,6,7] not [1,2,3,4]
+```
+
+- To effectively pass a compound value (like an array) by value-copy, you need to manually make a copy of it, so that the reference passed doesn’t still point to the original.
+
+To do the reverse—pass a scalar primitive value in a way where its value updates can be seen, kinda like a reference—you have to wrap the value in another compound value (`object`, `array`, etc.) that can be passed by reference-copy:
+
+```js
+function foo(wrapper) {
+  wrapper.a = 42;
+}
+
+var obj = {
+  a: 2,
+};
+
+foo(obj);
+obj.a; // 42
+```
+
+
+<br><br>
+
+## Review
+
+`numbers` include several special values, like `NaN` (supposedly “Not a Number,” but really more appropriately “invalid number”); `+Infinity` and `-Infinity`; and `-0`.
