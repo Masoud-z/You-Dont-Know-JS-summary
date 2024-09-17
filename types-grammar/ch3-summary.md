@@ -2,7 +2,7 @@
 
 <br>
 
-# Chapter 2: Natives
+# Chapter 3: Natives
 
 <br><br>
 

@@ -24,3 +24,4 @@
 - [Chapter 1: Types - Summary](ch1-summary.md)
 - [Chapter 2: Values - Summary](ch2-summary.md)
 - [Chapter 3: Natives - Summary](ch3-summary.md)
+- [Chapter 4: Coercion - Summary](ch4-summary.md)
