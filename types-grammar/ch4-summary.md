@@ -42,3 +42,45 @@ a.toString(); // "1,2,3"
 <br>
 
 #### JSON stringification
+
+It may be easier to consider values that are not JSON-safe. Some examples are `undefined`, functions, (ES6+) `symbols`, and objects with circular references (where property references in an object structure create a never-ending cycle through each other). These are all illegal values for a standard JSON structure, mostly because they aren’t portable to other languages that consume JSON values
+
+- The `JSON.stringify(..)` utility will automatically omit `undefined`, function, and symbol values when it comes across them.
+
+If such a value is found in an array, that value is replaced by `null` (so that the array position information isn’t altered). If found as a property of an object, that property will simply be excluded.
+
+```js
+JSON.stringify(undefined); // undefined
+JSON.stringify(function () {}); // undefined
+JSON.stringify([1, undefined, function () {}, 4]); // "[1,null,null,4]"
+
+JSON.stringify({ a: 2, b: function () {} }); // "{"a":2}"
+```
+
+- But if you try to `JSON.stringify(..)` an object with circular reference(s) in it, an error will be thrown.
+
+JSON stringification has the special behavior that if an object value has a `toJSON()` method defined, this method will be called first to get a value to use for serialization.
+
+```js
+var o = {};
+var a = {
+  b: 42,
+  c: o,
+  d: function () {},
+};
+
+// create a circular reference inside `a`
+o.e = a;
+// would throw an error on the circular reference
+// JSON.stringify( a );
+
+// define a custom JSON value serialization
+a.toJSON = function () {
+  // only include the `b` property for serialization
+  return { b: this.b };
+};
+JSON.stringify(a); // "{"b":42}"
+```
+
+- An optional second argument can be passed to `JSON.stringify(..)` that is called **replacer**.
+  This argument can either be an array or a function. It’s used to customize the recursive serialization of an object by providing a filtering mechanism for which properties should and should not be included,
