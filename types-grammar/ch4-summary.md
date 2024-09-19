@@ -274,3 +274,75 @@ Another extremely confusing place for unary `+` to be used adjacent to another o
 <br>
 
 #### Date to number
+
+Another common usage of the unary `+` operator is to coerce a `Date` object into a `number`, because the result is the Unix timestamp (milli‐seconds elapsed since 1 January 1970 00:00:00 UTC) representation of the date/time value:
+
+```js
+var d = new Date("Mon, 18 Aug 2014 08:53:06 CDT");
+d; // Mon, 18 Aug 2014 08:53:06 CDT (Central Time)
++d; // 1408369986000
+```
+
+- The `()` set on a constructor call (a function called with `new`) is optional only if there are no arguments to pass. So you may run across the `var timestamp = +new Date`.
+
+But coercion is not the only way to get the timestamp out of a Date object. A noncoercion approach is perhaps even preferable, as it’s even more explicit:
+
+```js
+var timestamp = new Date().getTime();
+// var timestamp = (new Date()).getTime();
+// var timestamp = (new Date).getTime();
+```
+
+But an even more preferable noncoercion option is to use the `Date.now()` static function added in ES5.
+
+- I’d recommend skipping the coercion forms related to dates. Use `Date.now()` for current now timestamps, and `new Date( .. ).get Time()` for getting a timestamp of a specific non-now date/time that you need to specify.
+
+<br>
+
+#### The curious case of the ~
+
+`~x` is roughly the same as `-(x+1)`. That’s weird, but slightly easier to reason about. So:
+
+```js
+~42; // -(42+1) ==> -43
+```
+
+<br>
+
+#### Truncating bits
+
+some developers use the double tilde `~~` to truncate the decimal part of a number (i.e., “coerce” it to a whole number integer).
+
+```js
+~~12.999999; // 12
+```
+
+However, `~~` needs some caution/clarification. First,` it only works reliably on 32-bit values`. But more importantly, `it doesn’t work the same on negative numbers`
+
+```js
+Math.floor(-49.6); // -50
+~~-49.6; // -49
+```
+
+<br>
+
+### Explicitly: Parsing Numeric Strings
+
+```js
+var a = "42";
+var b = "42px";
+Number(a); // 42
+parseInt(a); // 42
+Number(b); // NaN
+parseInt(b); // 42
+```
+
+Parsing a numeric value out of a string is tolerant of non-numeric characters—it just stops parsing left-to-right when encountered— whereas coercion is not tolerant and fails, resulting in the NaN value.
+
+```js
+parseInt("ASD12"); //NaN
+```
+
+<br>
+
+### Parsing non-strings
