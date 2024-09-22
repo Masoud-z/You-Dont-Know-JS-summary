@@ -35,3 +35,15 @@ There are different ways to do it but one of the easy ways is using **`Array.fro
 ```js
 var arr = Array.from(arguments);
 ```
+
+---
+
+<br><br>
+
+---
+
+## What are the differences between Parsing Numeric Strings and the type conversion?
+
+1. Parsing a numeric value out of a string is tolerant of non-numeric characters—it just stops parsing left-to-right when encountered— whereas coercion is not tolerant and fails, resulting in the NaN value.
+
+2. If you pass a non-string, the value you pass will automatically be coerced to a string first, which would clearly be a kind of hidden implicit coercion.

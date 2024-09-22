@@ -337,12 +337,154 @@ Number(b); // NaN
 parseInt(b); // 42
 ```
 
-Parsing a numeric value out of a string is tolerant of non-numeric characters—it just stops parsing left-to-right when encountered— whereas coercion is not tolerant and fails, resulting in the NaN value.
+**Parsing a numeric value out of a string is tolerant of non-numeric characters—it just stops parsing left-to-right when encountered**— **whereas coercion is not tolerant and fails, resulting in the NaN value**.
+
+- `parseInt(..)` has a twin, `parseFloat(..)`, which (as it sounds) pulls out a floating-point number from a string.
+
+- Don’t forget that `parseInt(..)` operates on string values. -If you pass a non-string, the value you pass will automatically be coerced to a string first, which would clearly be a kind of hidden implicit coercion.
 
 ```js
 parseInt("ASD12"); //NaN
 ```
 
+Prior to ES5, another gotcha existed with `parseInt(..)`, which was the source of many JS programs’ bugs. If you didn’t pass a second argument to indicate which numeric base (aka radix) to use for interpreting the numeric string contents, `parseInt(..)` would look at the first character to make a guess.
+
+As of ES5, `parseInt(..)` no longer guesses. Unless you say otherwise, it assumes base-10. That’s much nicer.
+
 <br>
 
-### Parsing non-strings
+#### Parsing non-strings
+
+```js
+parseInt(1 / 0, 19); // 18
+```
+
+It’s essentially `parseInt( "Infinity", 19 )`. How does it parse? The first character is "I", which is value 18 in the silly base-19. The second character "n" is not in the valid set of numeric characters, and as such the parsing simply politely stops, just like when it ran across "p" in "42px". The result? 18. Exactly like it sensibly should be.
+
+```js
+parseInt(0.000008); // 0 ("0" from "0.000008")
+parseInt(0.0000008); // 8 ("8" from "8e-7")
+parseInt(false, 16); // 250 ("fa" from "false")
+parseInt(parseInt, 16); // 15 ("f" from "function..")
+parseInt("0x10"); // 16
+parseInt("103", 2); // 2
+```
+
+In JavaScript, `parseInt("103", 2)` returns 2 because parseInt interprets the string "103" as a binary (base 2) number until it encounters an invalid digit, which in this case is "3"
+
+<br><br>
+
+### Explicitly: \* --> Boolean
+
+Just like with `String(..)` and `Number(..)` above, `Boolean(..)` (without the `new`, of course!) is an explicit way of forcing the `ToBoolean` coercion:
+
+```js
+var a = "0";
+var b = [];
+var c = {};
+
+Boolean(a); // true
+Boolean(b); // true
+Boolean(c); // true
+
+var d = "";
+var e = 0;
+var f = null;
+var g;
+
+Boolean(d); // false
+Boolean(e); // false
+Boolean(f); // false
+Boolean(g); // false
+
+!!a; // true
+!!b; // true
+!!c; // true
+!!d; // false
+!!e; // false
+!!f; // false
+!!g; // false
+```
+
+the unary `!` negate operator explicitly coerces a value to a `boolean`. The problem is that it also flips the value from truthy to falsy or vice versa. So, the most common way JS developers explicitly coerce to `boolean` is to use the `!!` double-negate operator, because the second `!` will flip the parity back to the original.
+
+<br>
+
+```js
+var a = 42;
+var b = a ? true : false;
+```
+
+The `? :` ternary operator will test a for truthiness, and based on that
+test will either assign `true` or `false` to `b`, accordingly
+
+There’s a hidden implicit coercion, in that the a expression has to first be coerced to boolean to perform the truthiness test. I’d call this idiom “explicitly implicit.”
+
+<br><br>
+
+## Implicit Coercion
+
+Implicit coercion refers to type conversions that are hidden, with nonobvious side effects that implicitly occur from other actions.
+
+<br>
+
+### Implicitly: Strings <--> Numbers
+
+According to the ES5 spec, section 11.6.1, the `+` algorithm (when an object value is an operand) will concatenate if either operand is either already a string, or if the following steps produce a string representation. So, when `+` receives an object (including array) for either operand, it first calls the `ToPrimitive` abstract operation (section 9.1) on the value, which then calls the `[[DefaultValue]]` algorithm (section 8.12.8) with a context hint of number.
+
+Consider:
+
+```js
+var a = [1, 2];
+var b = [3, 4];
+a + b; // "1,23,4"
+```
+
+The `array` will fail to produce a simple primitive, so it then falls to a `toString()` representation. The two arrays thus become "1,2" and "3,4", respectively. Now, `+` concatenates the two strings as you’d normally expect: "1,23,4".
+
+If either operand to `+` is a string (or become one with the above steps!), the operation will be string concatenation. Otherwise, it’s always numeric addition.
+
+Comparing this implicit coercion of `a + ""` to our earlier example of `String(a)` explicit coercion, there’s one additional quirk to be aware of. Because of how the `ToPrimitive` abstract operation works, `a + ""` invokes `valueOf()` on the a value, whose return value is then finally converted to a string via the internal `ToString` abstract operation. But `String(a)` just invokes `toString()` directly.
+
+Both approaches ultimately result in a string, but if you’re using an object instead of a regular primitive number value, you may not necessarily get the same string value!
+Consider:
+
+```js
+var a = {
+  valueOf: function () {
+    return 42;
+  },
+  toString: function () {
+    return 4;
+  },
+};
+a + ""; // "42"
+String(a); // "4"
+```
+
+<br>
+
+How can we implicitly coerce from `string` to `number`?
+
+```js
+var a = "3.14";
+var b = a - 0;
+b; // 3.14
+```
+
+The `-` operator is defined only for numeric subtraction, so `a - 0` forces a’s value to be coerced to a number.
+While far less common, `a \* 1` or `a / 1` would accomplish the same result, as those operators are also only defined for numeric operations.
+
+What about object values with the `-` operator? Similar story as for `+` above:
+
+```js
+var a = [3];
+var b = [1];
+a - b; // 2
+```
+
+Both array values have to become numbers, **but they end up first being coerced to strings** (using the expected `toString()` serialization), and then are coerced to numbers, for the `-` subtraction to perform on.
+
+<br>
+
+### Implicitly: Booleans --> Numbers
