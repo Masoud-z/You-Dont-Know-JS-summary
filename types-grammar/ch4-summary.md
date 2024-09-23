@@ -488,3 +488,244 @@ Both array values have to become numbers, **but they end up first being coerced 
 <br>
 
 ### Implicitly: Booleans --> Numbers
+
+Consider:
+
+```js
+function onlyOne(a, b, c) {
+  return !!((a && !b && !c) || (!a && b && !c) || (!a && !b && c));
+}
+var a = true;
+var b = false;
+onlyOne(a, b, b); // true
+onlyOne(b, a, b); // true
+onlyOne(a, b, a); // false
+```
+
+This `onlyOne(..)` utility should only return `true` if exactly one of the arguments is `true` / _truthy_.
+
+But what if we needed that utility to be able to handle four, five, or twenty flags in the same way?
+here’s where coercing the boolean values to numbers (0 or 1, obviously) can greatly help:
+
+```js
+function onlyOne() {
+  var sum = 0;
+  for (var i = 0; i < arguments.length; i++) {
+    // skip falsy values. same as treating
+    // them as 0's, but avoids NaN's.
+    if (arguments[i]) {
+      sum += arguments[i];
+    }
+  }
+  return sum == 1;
+}
+
+var a = true;
+var b = false;
+onlyOne(b, a); // true
+onlyOne(b, a, b, b, b); // true
+onlyOne(b, b); // false
+onlyOne(b, a, b, b, b, a); // false
+```
+
+We could of course do this with explicit coercion instead:
+
+```js
+function onlyOne() {
+  var sum = 0;
+  for (var i = 0; i < arguments.length; i++) {
+    sum += Number(!!arguments[i]);
+  }
+  return sum === 1;
+}
+```
+
+<br>
+
+### Implicitly: \* --> Boolean
+
+what sort of expression operations require/force (implicitly) a boolean coercion?
+
+1. The test expression in an `if (..)` statement
+2. The test expression (second clause) in a `for ( .. ; .. ; .. )` header
+3. The test expression in `while (..)` and `do..while(..)` loops
+4. The test expression (first clause) in `? :` ternary expressions
+5. The lefthand operand (which serves as a test expression) to the `||` (“logical or”) and `&&` (“logical and”) operators
+
+Any value used in these contexts that is not already a boolean will be implicitly coerced to a boolean using the rules of the ToBoolean abstract operation covered earlier in this chapter.
+
+<br>
+
+### Operators `||` and `&&`
+
+The value produced by a `&&` or `||` operator is not necessarily of type Boolean. The value produced will always be the value of one of the two operand expressions.
+
+```js
+var a = 42;
+var b = "abc";
+var c = null;
+a || b; // 42
+a && b; // "abc"
+c || b; // "abc"
+c && b; // null
+```
+
+Another way of thinking about these operators:
+
+```js
+a || b;
+// roughly equivalent to:
+a ? a : b;
+
+a && b;
+// roughly equivalent to:
+a ? b : a;
+```
+
+I call `a || b` “**roughly equivalent**” to `a ? a : b` because **the outcome is identical**, _but there’s a nuanced difference_. In `a ? a : b`, if `a` was a more complex expression (_like for instance one that might have side effects like calling a function_, etc.), **then the `a` expression would possibly be evaluated twice (if the first evaluation was truthy)**. By contrast, **for `a || b`, the `a` expression is evaluated only once**, and that value is used both for the coercive test as well as the result value (if appropriate). The same nuance applies to the `a && b` and `a ? b : a` expressions.
+
+<br>
+
+### Symbol Coercion
+
+_explicit_ coercion of a `symbol` to a `string` is allowed, but _implicit_ coercion of the same is disallowed and throws an error.
+
+```js
+var s1 = Symbol("cool");
+String(s1); // "Symbol(cool)"
+var s2 = Symbol("not cool");
+s2 + ""; // TypeError
+```
+
+**`symbol` values cannot coerce to `number`** at all (throws an error either way), but strangely they can both _explicitly_ and _implicitly_ coerce to boolean (**always `true`**).
+
+<br><br>
+
+## Loose Equals Versus Strict Equals
+
+The correct description is: "`==` allows coercion in the equality comparison and `===` disallows coercion.”
+
+<br>
+
+### Equality Performance
+
+Don’t fall into the trap, as many have, of thinking this has anything to do with performance, though, as if == is going to be slower than === in any relevant way. While it’s measurable that coercion does take a little bit of processing time, it’s mere microseconds (yes, that’s millionths of a second!).s
+
+If you want coercion, use `==` loose equality, but if you don’t want coercion, use `===` strict equality
+
+The implication here then is that both `==` and `===` check the types of their operands. The difference is in how they respond if the types don’t match.
+<br>
+
+### Abstract Equality
+
+The `==` operator’s behavior is defined as “**The Abstract Equality Comparison Algorithm**” in section 11.9.3 of the ES5 spec.
+
+- `NaN` is never equal to itself.
+- `+0` and `-0` are equal to each other.
+
+<br>
+
+for `==` loose equality comparison with `object`s (including `functions` and `arrays`). Two such values are only equal if they are both references to the exact same value. No coercion occurs here.
+
+The `===` strict equality comparison is defined identically to 11.9.3.1, including the provision about two object values. It’s a very little known fact that **`==` and `===` behave identically in the case where two `object`s are being compared**!
+
+<br>
+
+#### Comparing: `string`s to `number`s
+
+**In loose Equality (`x == y`):**
+
+1. If `Type(x)` is Number and `Type(y)` is String, return the result of the comparison `x == ToNumber(y)`.
+
+2. If `Type(x)` is String and `Type(y)` is Number, return the result of the comparison `ToNumber(x) == y`.
+
+<br>
+
+#### Comparing: anything to `boolean`
+
+**In loose Equality `(x == y)`:**
+
+1. If `Type(x)` is Boolean, return the result of the comparison `ToNumber(x) == y`.
+
+2. If `Type(y)` is Boolean, return the result of the comparison `x == ToNumber(y)`.
+
+What is relevant is to understand how the `==` comparison algorithm behaves _with all the different type combinations_. As it regards a `boolean` value on either side of the `==`, **a `boolean` always coerces to a `number` first**.
+
+If you avoid ever using `== true` or `== false` (aka loose equality with booleans) in your code, you’ll never have to worry about this truthiness/falsiness mental gotcha.
+
+<br>
+
+#### Comparing: `nulls` to `undefined`s
+
+**In loose Equality (`x == y`):**
+
+1. If `x` is `null` and `y` is `undefined`, return `true`.
+2. If `x` is `undefined` and `y` is `null`, return `true`.
+
+`null` and `undefined` can be treated as indistinguishable for comparison purposes, if you use the `==` loose equality operator to allow their mutual implicit coercion:
+
+```js
+var a = null;
+var b;
+a == b; // true
+a == null; // true
+b == null; // true
+
+a == false; // false
+b == false; // false
+a == ""; // false
+b == ""; // false
+a == 0; // false
+b == 0; // false
+```
+
+<br>
+
+#### Comparing: objects to nonobjects
+
+If an object/function/array is compared to a simple scalar primitive (`string`, `number`, or `boolean`),
+
+1. If `Type(x)` is either String or Number and `Type(y)` is Object, return the result of the comparison `x == ToPrimitive(y)`.
+
+2. If `Type(x)` is Object and `Type(y)` is either String or Number, return the result of the comparison `ToPrimitive(x) == y`.
+
+- You may notice that these clauses only mention String and Number, **but not Boolean**. That’s because, as quoted earlier, clauses 11.9.3.6-7 **take care of coercing any Boolean operand presented to a Number first**.
+
+<br>
+
+All the quirks of the `ToPrimitive` abstract operation that we discussed earlier in this chapter (`toString()`, `valueOf()`) apply here as you’d expect.
+
+<br>
+
+**“unboxing**,” where an object wrapper around a primitive value (like from `new String("abc")`, for instance) is unwrapped, and the underlying primitive value ("`abc`") is returned. This behavior is related to the ToPrimitive coercion in the `==` algorithm:
+
+```js
+var a = "abc";
+var b = Object(a); // same as `new String( a )`
+a === b; // false
+a == b; // true
+```
+
+`a == b` is `true` because `b` is coerced (aka “unboxed,” unwrapped) via `ToPrimitive` to its underlying "`abc`" simple scalar primitive value, which is the same as the value in `a`.
+
+<br>
+
+The `null` and `undefined` values cannot be boxed—they have no object wrapper equivalent—so `Object(null)` is just like `Object()` in that both just produce a normal object.
+
+```js
+var a = null;
+var b = Object(a); // same as `Object()`
+a == b; // false
+var c = undefined;
+var d = Object(c); // same as `Object()`
+c == d; // false
+var e = NaN;
+var f = Object(e); // same as `new Number( e )`
+e == f; // false
+```
+
+- `NaN` can be boxed to its Number object wrapper equivalent, but when `==` causes an unboxing, the `NaN == NaN` comparison fails because `NaN` is never equal to itself.
+
+<br>
+
+### Edge Cases

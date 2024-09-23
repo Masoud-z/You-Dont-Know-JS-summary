@@ -44,6 +44,14 @@ var arr = Array.from(arguments);
 
 ## What are the differences between Parsing Numeric Strings and the type conversion?
 
-1. Parsing a numeric value out of a string is tolerant of non-numeric characters—it just stops parsing left-to-right when encountered— whereas coercion is not tolerant and fails, resulting in the NaN value.
+Parsing a numeric value out of a string is tolerant of non-numeric characters—it just stops parsing left-to-right when encountered— whereas coercion is not tolerant and fails, resulting in the NaN value.
 
-2. If you pass a non-string, the value you pass will automatically be coerced to a string first, which would clearly be a kind of hidden implicit coercion.
+---
+
+<br><br>
+
+---
+
+## What is the difference between `a || b` || `a ? a : b` ?
+
+`a || b` “**roughly equivalent**” to `a ? a : b` because **the outcome is identical**, _but there’s a nuanced difference_. In `a ? a : b`, if `a` was a more complex expression (_like for instance one that might have side effects like calling a function_, etc.), **then the `a` expression would possibly be evaluated twice (if the first evaluation was truthy)**. By contrast, **for `a || b`, the `a` expression is evaluated only once**, and that value is used both for the coercive test as well as the result value (if appropriate). The same nuance applies to the `a && b` and `a ? b : a` expressions.
