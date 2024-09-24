@@ -55,3 +55,13 @@ Parsing a numeric value out of a string is tolerant of non-numeric characters—
 ## What is the difference between `a || b` || `a ? a : b` ?
 
 `a || b` “**roughly equivalent**” to `a ? a : b` because **the outcome is identical**, _but there’s a nuanced difference_. In `a ? a : b`, if `a` was a more complex expression (_like for instance one that might have side effects like calling a function_, etc.), **then the `a` expression would possibly be evaluated twice (if the first evaluation was truthy)**. By contrast, **for `a || b`, the `a` expression is evaluated only once**, and that value is used both for the coercive test as well as the result value (if appropriate). The same nuance applies to the `a && b` and `a ? b : a` expressions.
+
+---
+
+<br><br>
+
+---
+
+## How does coercion work on loose equality when one side is a boolean? 
+
+What is relevant is to understand how the `==` comparison algorithm behaves _with all the different type combinations_. As it regards a `boolean` value on either side of the `==`, **a `boolean` always coerces to a `number` first**.

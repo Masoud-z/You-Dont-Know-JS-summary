@@ -729,3 +729,130 @@ e == f; // false
 <br>
 
 ### Edge Cases
+
+let’s try to call out the worst, craziest corner cases so we can see what we need to avoid to not get bitten with coercion bugs.
+
+<br>
+
+#### A number by any other value would…
+
+```js
+Number.prototype.valueOf = function () {
+  return 3;
+};
+
+new Number(2) == 3; // true
+```
+
+`2 == 3` would not have fallen into this trap, because neither 2 nor 3 would have invoked the built-in `Number.prototype.valueOf()` method because both are already primitive number values and can be compared directly. However, `new Number(2)` must go through the `ToPrimitive` coercion, and thus invoke `valueOf()`
+
+```js
+var i = 2;
+
+Number.prototype.valueOf = function () {
+  return i++;
+};
+
+var a = new Number(42);
+if (a == 2 && a == 3) {
+  console.log("Yep, this happened.");
+}
+```
+
+<br>
+
+##### Falsy comparisons
+
+```js
+"0" == null; // false
+"0" == undefined; // false
+"0" == false; // true -- UH OH! ==>Be careful
+//Convert false to a number: false → 0
+//Convert "0" to a number: "0" → 0
+//Compare the two numbers: 0 == 0
+//Result: true
+//What is relevant is to understand how the `==` comparison algorithm behaves _with all the different type combinations_. As it regards a `boolean` value on either side of the `==`, **a `boolean` always coerces to a `number` first**.
+
+"0" == NaN; // false
+"0" == 0; // true
+"0" == ""; // false
+
+false == null; // false
+false == undefined; // false
+false == NaN; // false
+false == 0; // true -- UH OH! ==>Be careful
+//Convert false to a number: false → 0
+//Compare the two numbers: 0 == 0
+//Result: true
+
+false == ""; // true -- UH OH! ==>Be careful
+//Convert false to a number: false → 0
+//Convert "" to a number: "" → 0
+//Compare the two numbers: 0 == 0
+
+false == []; // true -- UH OH! ==>Be careful
+//Convert false to a number: false → 0
+//Convert [] to a primitive (number):
+//[] → "" (empty string by toString)
+//"" → 0 (empty string converted to number)
+//Compare the two numbers: 0 == 0
+
+false == {}; // false
+
+"" == null; // false
+"" == undefined; // false
+"" == NaN; // false
+"" == 0; // true -- UH OH! ==>Be careful
+//Initial expression: "" == 0
+//Convert "" to a number: "" → 0
+//Compare the two numbers: 0 == 0
+
+"" == []; // true -- UH OH! ==>Be careful
+//Initial expression: "" == []
+//Convert [] to a primitive (string):
+//[] → "" (empty string by toString)
+//Compare the two strings: "" == ""
+
+"" == {}; // false
+
+0 == null; // false
+0 == undefined; // false
+0 == NaN; // false
+0 == []; // true -- UH OH! ==>Be careful
+//Initial expression: 0 == []
+//Convert [] to a primitive (string):
+//[] → "" (empty string by toString)
+//Convert "" to a number: "" → 0
+//Compare the two numbers: 0 == 0
+
+0 == {}; // false
+```
+
+<br>
+
+#### The crazy ones
+
+- **`![] == false`**:
+  a. Initial expression: ![]
+  b. Determine the truthiness of []:
+  § [] is a truthy value.
+  c. Apply the ! operator:
+  d. ![] converts the truthy value [] to false
+
+- **` [] == ![]; //true`** :
+
+  > a. Initial expression: [] == ![]
+  > b. Evaluate ![]: ![] → false
+  >
+  > > i. Initial value: [] (an empty array)
+  > > ii. Determine the truthiness of []:
+  > > iii. [] is truthy because all objects are considered truthy.
+  > > iv. Apply the ! operator:
+
+  > v. ![] converts the truthy value [] to false.
+  > c. Expression becomes: [] == false
+  > d. Convert false to a number: false → 0
+  > e. Convert [] to a primitive (string): [] → ""
+  > f. Convert "" to a number: "" → 0
+  > g. Compare the two numbers: 0 == 0
+  > h. Result: true
