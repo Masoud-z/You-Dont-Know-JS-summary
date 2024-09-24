@@ -837,24 +837,128 @@ false == {}; // false
 
 - **`![] == false`**:
 
-1. Initial expression: ![]
-2. Determine the truthiness of []:
-   - [] is a truthy value.
-3. Apply the ! operator:
-4. ![] converts the truthy value [] to false
+1. Initial expression: `![]`
+2. Determine the truthiness of `[]`:
+   - `[]` is a truthy value.
+3. Apply the `!` operator:
+4. `![]` converts the truthy value `[]` to `false`
+
+<br>
 
 - **` [] == ![]; //true`** :
 
-1. Initial expression: [] == ![]
-2. Evaluate ![]: ![] → false
-   - Initial value: [] (an empty array)
-   - Determine the truthiness of []:
-   - [] is truthy because all objects are considered truthy.
-   - Apply the ! operator
-3. ![] converts the truthy value [] to false.
-4. Expression becomes: [] == false
-5. Convert false to a number: false → 0
-6. Convert [] to a primitive (string): [] → ""
-7. Convert "" to a number: "" → 0
-8. Compare the two numbers: 0 == 0
-9. Result: true
+1. Initial expression: `[] == ![]`
+2. Evaluate `![]`: `![]` → `false`
+   - Initial value: `[]` (an empty array)
+   - Determine the truthiness of `[]`:
+   - `[]` is truthy because all objects are considered truthy.
+   - Apply the `!` operator
+3. `![]` converts the truthy value `[]` to `false`.
+4. Expression becomes: `[] == false`
+5. Convert `false` to a number: `false` →` 0`
+6. Convert `[]` to a primitive (string): `[]` → `""`
+7. Convert `""` to a number: `""` → 0
+8. Compare the two numbers: `0 == 0`
+9. Result: `true`
+
+<br>
+
+- with empty "", "\n" (or " " or any other whitespace combination) is coerced via ToNumber, and the result is `0`.
+
+```js
+0 == "\n"; // true
+```
+
+<br>
+
+#### Safely using implicit coercion
+
+- If either side of the comparison can have `true` or `false` values, don’t ever, EVER use `==`.
+
+- If either side of the comparison can have `[]`, `""`, or `0` values, seriously consider not using `==`.
+
+<br><br>
+
+## Abstract Relational Comparison
+
+it’s important nonetheless to think about what happens with `a < b` comparisons
+
+The algorithm first calls `ToPrimitive` coercion on both values, and if the return result of either call is not a `string`, then both values are coerced to `number` values using the `ToNumber` operation rules, and compared numerically.
+
+<br>
+
+For example:
+
+```js
+var a = [42];
+var b = ["43"];
+a < b; // true
+b < a; // false
+```
+
+<br>
+
+However, if both values are strings for the `<` comparison, simple lexicographic (natural alphabetic) comparison on the characters is performed:
+
+```js
+var a = ["42"];
+var b = ["043"];
+a < b; // false
+```
+
+`a` and `b` are not coerced to `numbers`, because both of them end up as `strings` after the `ToPrimitive` coercion on the two `arrays`. So, `"42"` is compared character by character to `"043"`, starting with the first characters `"4"` and `"0"`, respectively. Since `"0"` is lexicographically less than `"4"`, the comparison returns `false`.
+
+The exact same behavior and reasoning goes for:
+
+```js
+var a = [4, 2];
+var b = [0, 4, 3];
+a < b; // false
+```
+
+<br>
+
+What about:
+
+```js
+var a = { b: 42 };
+var b = { b: 43 };
+a < b; // false
+```
+
+`a < b` is also `false`, because `a` becomes `[object Object]` and `b` becomes `[object Object]`, and so clearly `a` is not lexicographically less than `b`.
+
+<br>
+
+But strangely:
+
+```js
+var a = { b: 42 };
+var b = { b: 43 };
+
+a < b; // false
+a == b; // false
+a > b; // false
+
+a <= b; // true
+a >= b; // true
+```
+
+Why is `a == b` not `true`? They’re the same `string` value ("`[object Object]`"), so it seems they should be equal, right? Nope. Recall the previous discussion about how `==` works with object references.
+But then how are `a <= b` and `a >= b` resulting in `true`, if `a < b` and `a == b` and `a > b` are all `false`?
+
+**Because the spec says for `a <= b`, it will actually evaluate `b < a` first, and then negate that result. Since `b < a` is also false, the result of `a<= b` is `true`.**
+
+<br>
+
+There’s no way to prevent implicit coercion from occurring with relational comparisons like `a < b`, other than to ensure that `a` and `b` are of the same type explicitly before making the comparison.
+
+<br><br>
+
+## Review
+
+In this chapter, we turned our attention to how JavaScript type conversions happen, called **coercion**, which can be characterized as either **explicit** or **implicit**.
+
+- **Explicit** coercion is code where it is obvious that the intent is to convert a value from one type to another. The benefit is improvement in readability and maintainability of code by reducing confusion.
+
+- **Implicit** coercion is coercion that is “hidden” as a side effect of some other operation, where it’s not as obvious that the type conversion will occur.
