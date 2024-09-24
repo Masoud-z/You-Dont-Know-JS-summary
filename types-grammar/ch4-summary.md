@@ -771,7 +771,10 @@ if (a == 2 && a == 3) {
 //Convert "0" to a number: "0" → 0
 //Compare the two numbers: 0 == 0
 //Result: true
-//What is relevant is to understand how the `==` comparison algorithm behaves _with all the different type combinations_. As it regards a `boolean` value on either side of the `==`, **a `boolean` always coerces to a `number` first**.
+//What is relevant is to understand how the `==` comparison algorithm behaves
+// _with all the different type combinations_.
+// As it regards a `boolean` value on either side of the `==`,
+// **a `boolean` always coerces to a `number` first**.
 
 "0" == NaN; // false
 "0" == 0; // true
@@ -833,26 +836,25 @@ false == {}; // false
 #### The crazy ones
 
 - **`![] == false`**:
-  a. Initial expression: ![]
-  b. Determine the truthiness of []:
-  § [] is a truthy value.
-  c. Apply the ! operator:
-  d. ![] converts the truthy value [] to false
+
+1. Initial expression: ![]
+2. Determine the truthiness of []:
+   - [] is a truthy value.
+3. Apply the ! operator:
+4. ![] converts the truthy value [] to false
 
 - **` [] == ![]; //true`** :
 
-  > a. Initial expression: [] == ![]
-  > b. Evaluate ![]: ![] → false
-  >
-  > > i. Initial value: [] (an empty array)
-  > > ii. Determine the truthiness of []:
-  > > iii. [] is truthy because all objects are considered truthy.
-  > > iv. Apply the ! operator:
-
-  > v. ![] converts the truthy value [] to false.
-  > c. Expression becomes: [] == false
-  > d. Convert false to a number: false → 0
-  > e. Convert [] to a primitive (string): [] → ""
-  > f. Convert "" to a number: "" → 0
-  > g. Compare the two numbers: 0 == 0
-  > h. Result: true
+1. Initial expression: [] == ![]
+2. Evaluate ![]: ![] → false
+   - Initial value: [] (an empty array)
+   - Determine the truthiness of []:
+   - [] is truthy because all objects are considered truthy.
+   - Apply the ! operator
+3. ![] converts the truthy value [] to false.
+4. Expression becomes: [] == false
+5. Convert false to a number: false → 0
+6. Convert [] to a primitive (string): [] → ""
+7. Convert "" to a number: "" → 0
+8. Compare the two numbers: 0 == 0
+9. Result: true
