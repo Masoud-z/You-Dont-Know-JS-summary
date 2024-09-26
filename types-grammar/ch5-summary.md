@@ -321,3 +321,15 @@ Not true! The totally valid `JSON` value y by itself would actually throw a JS e
 <br>
 
 ##### Blocks
+
+Another commonly cited JS gotcha is:
+
+```
+[] + {}; // "[object Object]"
+
+{} + []; // 0 
+```
+
+On the first line, `{}` appears in the `+` operator’s expression, and is therefore interpreted as an actual value (an empty object). Chapter 4 explained that `[]` is coerced to `""` and thus `{}` is coerced to a `string` value as well: "`[object Object]`".
+
+But on the second line, `{}` is interpreted as a standalone `{}` empty block (which does nothing). **Blocks don’t need semicolons to terminate them**, so the lack of one here isn’t a problem. Finally, + [] is an expression that explicitly coerces the [] to a number, which is the 0 value.
