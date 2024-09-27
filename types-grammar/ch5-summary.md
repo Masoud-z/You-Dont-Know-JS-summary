@@ -807,3 +807,43 @@ baz(); // Hello
 
 ## switch
 
+In `switch` if a match is found, execution will begin in that matched `case`, and will either go until a `break` is encountered or until the end of the `switch` block is found.
+
+```js
+switch (a) {
+  case 2:
+    // do something
+    break;
+  case 42:
+    // do another thing
+    break;
+  default:
+  // fallback to here
+}
+```
+
+First, the matching that occurs between the `a` expression and each `case` expression is identical to the `===` algorithm
+
+<br>
+
+Lastly, the `default` clause is optional, and it doesn’t necessarily have to come at the end (although that’s the strong convention). Even in the `default` clause, the same rules apply about encountering a break or not:
+
+```js
+var a = 10;
+switch (a) {
+  case 1:
+  case 2:
+  // never gets here
+  default:
+    console.log("default");
+  case 3:
+    console.log("3");
+    break;
+  case 4:
+    console.log("4");
+}
+// default
+// 3
+```
+
+Because it doesn't have `break` after default it continues to execute everything till it finds `break` or until the end of the switch block is found.
