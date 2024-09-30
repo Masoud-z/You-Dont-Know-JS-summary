@@ -87,3 +87,105 @@ If you don’t do it, and no one else does in the code in your application, you�
 <br>
 
 ### Shims/Polyfills
+
+It’s usually said that the only safe place to extend a native is in an older (non-spec-compliant) environment, since that’s unlikely to ever change—new browsers with new spec features replace older browsers rather than amending them.
+
+```js
+if (!Array.prototype.foobar) {
+  // silly, silly
+  Array.prototype.foobar = function () {
+    this.push("foo", "bar");
+  };
+}
+```
+
+If there’s already a spec for `Array.prototype.foobar`, and the specified behavior is equal to this logic, you’re pretty safe in defining such a snippet, and in that case it’s generally called a “polyfill” (or “shim”).
+
+Such code is very useful to include in your code base to “patch” older browser environments that aren’t updated to the newest specs. Using polyfills is a great way to create predictable code across all your supported environments.
+
+<br>
+
+## <script>s
+
+The one thing they (script tags) share is the single global object (`window` in the browser), which means multiple files can append their code to that shared namespace and they can all interact.
+
+**But global variable scope hoisting does not occur across these boundaries**
+
+<br>
+
+So the following code would not work:
+
+```html
+<script>
+  foo();
+</script>
+
+<script>
+  function foo() { .. }
+</script>
+```
+
+<br>
+
+But either of these would work instead:
+
+```html
+<script>
+  foo();
+  function foo() { .. }
+</script>
+```
+
+or
+
+```html
+<script>
+  function foo() { .. }
+</script>
+<script>
+  foo();
+</script>
+```
+
+Also, if an error occurs in a script element (inline or external), as a separate standalone JS program it will fail and stop, but any subsequent scripts will run (still with the shared global) unimpeded.
+
+<br>
+
+You can create script elements dynamically from your code, and inject them into the DOM of the page, and the code in them will behave basically as if loaded normally in a separate file:
+
+```js
+var greeting = "Hello World";
+var el = document.createElement("script");
+el.text = "function foo(){ alert( greeting );} setTimeout( foo, 1000 );";
+
+document.body.appendChild(el);
+```
+
+The charset attribute will not work on inline script elements.
+
+<br><br>
+
+## Reserved Words
+
+The ES5 spec defines a set of “reserved words” in Section 7.6.1 that cannot be used as standalone variable names. Technically, there are four categories: “keywords,” “future reserved words,” the `null` literal, and the `true`/`false` boolean literals.
+
+Prior to ES5, the reserved words also could not be property names or keys in object literals, but that restriction no longer exists.
+
+StackOverflow user “art4theSould” creatively worked all these reserved words into a fun little poem:
+
+> Let this long package float,
+> Goto private class if short.
+> While protected with debugger case,
+> Continue volatile interface.
+> Instanceof super synchronized throw,
+> Extends final export throws.
+>
+> Try import double enum?
+> False, boolean, abstract function,
+> Implements typeof transient break!
+> Void static, default do,
+>
+> Switch int native new.
+> Else, delete null public var
+> In return for const, true, char
+> …Finally catch byte.
