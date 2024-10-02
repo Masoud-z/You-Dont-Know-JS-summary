@@ -25,3 +25,4 @@
 - [Chapter 3: Natives - Summary](ch3-summary.md)
 - [Chapter 4: Coercion - Summary](ch4-summary.md)
 - [Chapter 5: Grammar - Summary](ch5-summary.md)
+- [Appendix A: Mixed Environment JavaScript - Summary](apA-summary.md)

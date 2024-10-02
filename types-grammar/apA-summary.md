@@ -171,7 +171,7 @@ The ES5 spec defines a set of “reserved words” in Section 7.6.1 that cannot 
 
 Prior to ES5, the reserved words also could not be property names or keys in object literals, but that restriction no longer exists.
 
-StackOverflow user “art4theSould” creatively worked all these reserved words into a fun little poem:
+StackOverflow user “art4theSould” creatively worked all these reserved words into a fun little poem (http://stackoverflow.com/questions/26255/reserved-keywords-in-javascript/12114140#12114140):
 
 > Let this long package float,
 > Goto private class if short.
@@ -181,11 +181,13 @@ StackOverflow user “art4theSould” creatively worked all these reserved words
 > Extends final export throws.
 >
 > Try import double enum?
-> False, boolean, abstract function,
-> Implements typeof transient break!
-> Void static, default do,
 >
-> Switch int native new.
-> Else, delete null public var
-> In return for const, true, char
-> …Finally catch byte.
+> - False, boolean, abstract function,
+>   Implements typeof transient break!
+>   Void static, default do,
+>   Switch int native new.
+>   Else, delete null public var
+>   In return for const, true, char
+>   …Finally catch byte.
+
+**Note:** This poem includes words that were reserved in ES3 (`byte`, `long`, etc.) that are no longer reserved as of ES5.
