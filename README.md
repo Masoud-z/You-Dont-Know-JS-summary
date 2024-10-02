@@ -21,8 +21,8 @@ This is a **summary** of the famous <a href="https://github.com/getify/You-Dont-
 ---
 
 > [!CAUTION]
-> This resource **will be most useful** <ins>if you have already completed the <a href="https://github.com/getify/You-Dont-Know-JS">original serie.</a></ins>.
-> In case you haven't, I strongly encourage you to try them first and then come back here for a refresher.
+> This resource will be most useful if you have <i>already completed</i> the <a href="https://github.com/getify/You-Dont-Know-JS">original serie.</a>.
+> In case you haven't, I strongly encourage you to try them first and this repo as a refresher afterwards.
 
 ---
 
