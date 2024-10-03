@@ -1,6 +1,6 @@
 # You Don't Know JS (Yet) <ins>**_Summary_**</ins>
 
-This is the **summary** of famous book series <a href="https://github.com/getify/You-Dont-Know-JS">**_You Don't Know JS (Yet)_**</a> by <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Kyle Simpson</a>.
+This is a **summary** of the famous <a href="https://github.com/getify/You-Dont-Know-JS">**_You Don't Know JS (Yet)_**</a> by <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Kyle Simpson</a>.
 
 [You Don't Know JS Yet - 2nd Edition:](https://github.com/getify/You-Dont-Know-JS/tree/2nd-ed)
 
@@ -21,8 +21,8 @@ This is the **summary** of famous book series <a href="https://github.com/getify
 ---
 
 > [!CAUTION]
-> This **may be useful** <ins>if you first read the <a href="https://github.com/getify/You-Dont-Know-JS">original books!</a></ins>.
-> If you haven't read the books don't waste your time here, it will definitely be useless.
+> This resource will be most useful if you have <i>already completed</i> the <a href="https://github.com/getify/You-Dont-Know-JS">original serie.</a>.
+> In case you haven't, I strongly encourage you to try them first and this repo as a refresher afterwards.
 
 ---
 
