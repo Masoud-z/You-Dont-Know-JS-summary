@@ -13,8 +13,8 @@
 ---
 
 > [!CAUTION]
-> This **may be useful** <ins>if you first read the <a href="https://github.com/getify/You-Dont-Know-JS">original books!</a></ins>.
-> If you haven't read the books don't waste your time here, it will definitely be useless.
+> This resource will be most useful if you have <i>already completed</i> the <a href="https://github.com/getify/You-Dont-Know-JS">original series</a>.
+> In case you haven't, I strongly encourage you to try them first and use this repo as a refresher afterward.
 
 ---
 
