@@ -1,6 +1,6 @@
 # You Don't Know JS (Yet) <ins>**_Summary_**</ins>
 
-This is a **summary** of the famous book series<a href="https://github.com/getify/You-Dont-Know-JS">**_You Don't Know JS (Yet)_**</a> by <a href="https://me.getify.com/">Kyle Simpson</a>.
+This is a **summary** of the famous book series <a href="https://github.com/getify/You-Dont-Know-JS">**_You Don't Know JS (Yet)_**</a> by <a href="https://me.getify.com/">Kyle Simpson</a>.
 
 [You Don't Know JS Yet - 2nd Edition:](https://github.com/getify/You-Dont-Know-JS/tree/2nd-ed)
 
